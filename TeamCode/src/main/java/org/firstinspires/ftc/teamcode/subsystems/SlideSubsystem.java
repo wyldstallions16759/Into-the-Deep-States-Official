@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class SlideSubsystem {
     public enum Slide{
         SLIDE_A,
@@ -15,16 +17,24 @@ public class SlideSubsystem {
     private DcMotor slideA;
     private DcMotor slideB;
 
+    private Telemetry telemetry;
+
     private int maxExtentA;
     private int maxExtentB;
 
-    private double tolerance = 0.03;
+    private int maxExtentInches;
+
+    private double tolerance;
 
     public double target; // where target is a double 0.0-1.0
 
-    public SlideSubsystem(HardwareMap hardwareMap, String a, String b, int maxExtentA, int maxExtentB){
+    public SlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry, String a, String b, int maxExtentA, int maxExtentB, int maxExtentInches, double toleranceInches){
+        this.telemetry = telemetry;
+
         this.maxExtentA = maxExtentA;
         this.maxExtentB = maxExtentB;
+        this.maxExtentInches = maxExtentInches;
+        this.tolerance = toleranceInches/maxExtentInches;
 
         this.slideA = hardwareMap.get(DcMotor.class, a);
         this.slideB = hardwareMap.get(DcMotor.class, b);
@@ -42,8 +52,8 @@ public class SlideSubsystem {
         this.slideA.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    public void setTarget(double target){
-        this.target = target;
+    public void setTarget(double target){ // where target is in INCHES
+        this.target = target/maxExtentInches;
     }
 
     public double getPosition(Slide slide){
@@ -55,15 +65,24 @@ public class SlideSubsystem {
         // }
     }
 
-    public boolean runToTarget(){
-        return this.runToTarget(this.target);
+    public boolean runToTarget(double target){
+        this.setTarget(target);
+        return this.runToTarget();
     }
 
-    public boolean runToTarget(double target){
-        this.target = target;
-
+    public boolean runToTarget(){
         double a = this.getPosition(Slide.SLIDE_A);
         double b = this.getPosition(Slide.SLIDE_B);
+
+        telemetry.addLine("Motor A:");
+        telemetry.addData("Inches", a*maxExtentInches);
+        telemetry.addData("Percent",a);
+        telemetry.addData("Ticks",slideA.getCurrentPosition());
+
+        telemetry.addLine("Motor B:");
+        telemetry.addData("Inches", b*maxExtentInches);
+        telemetry.addData("Percent",b);
+        telemetry.addData("Ticks",slideB.getCurrentPosition());
 
         // if a is less than b, slow down a
         // if b is less than a, slow down b
@@ -71,8 +90,8 @@ public class SlideSubsystem {
         // if going up, set power of A to b/a.
         // if going down, set power of A to a/b.
 
-        if (Math.abs(a - target) < this.tolerance){
-            if (a < target){
+        if (Math.abs(a - this.target) < this.tolerance){
+            if (a < this.target){
                 // we need to go UP!
                 double aPower = b/a;
                 double bPower = 1;
