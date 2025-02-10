@@ -93,7 +93,7 @@ public class SlideSubsystem {
         if (Math.abs(a - this.target) < this.tolerance){
             if (a < this.target){
                 // we need to go UP!
-                double aPower = b/a;
+                double aPower = (a==0)?1:b/a;
                 double bPower = 1;
 
                 double max = Math.max(aPower, bPower);
@@ -103,9 +103,8 @@ public class SlideSubsystem {
 
                 slideA.setPower(aPower);
                 slideB.setPower(bPower);
-            }
-            else{
-                double aPower = a/b;
+            } else{
+                double aPower = (b==0)?1:a/b;
                 double bPower = 1;
 
                 double max = Math.max(aPower, bPower);
@@ -116,8 +115,7 @@ public class SlideSubsystem {
                 slideA.setPower(-aPower);
                 slideB.setPower(-bPower);
             }
-        }
-        else {
+        } else {
             slideA.setPower(0);
             slideB.setPower(0);
             return false;
