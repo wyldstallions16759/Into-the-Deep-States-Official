@@ -10,7 +10,7 @@ public class WristSubsystemTest extends LinearOpMode {
     private WristSubsystem28147 wrist;
 
     private double wristPosition = 0.5;
-    private double wristIncrement = 0.075;
+    private double wristIncrement = 0.15;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,12 +28,7 @@ public class WristSubsystemTest extends LinearOpMode {
             boolean x = gamepad1.x;
             boolean bumper = gamepad1.right_bumper;
 
-             /*if (!toggleState && gamepad1.a){
-                 wrist.claw();
-             }
-             toggleState = gamepad1.a;*/
-
-            if (b && !buttonBToggle){
+            /*if (b && !buttonBToggle){
                 telemetry.addLine("B");
                 wristPosition += wristIncrement;
             }
@@ -47,7 +42,9 @@ public class WristSubsystemTest extends LinearOpMode {
 
             wristPosition = Math.min(Math.max(0, wristPosition), 1);
 
-            wrist.wrist((wristPosition*2)-1);
+            wrist.wrist((wristPosition*2)-1);//*/
+
+            wrist.wrist(gamepad1.left_stick_x);
 
             if (bumper && !bumperToggle){
                 wrist.claw();
