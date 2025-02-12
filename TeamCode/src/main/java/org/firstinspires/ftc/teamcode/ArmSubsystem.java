@@ -13,8 +13,8 @@ public class ArmSubsystem {
     private DcMotor ElevatorB = null;
     private DcMotor slideA = null;
     private DcMotor slideB = null;
-    private int EScalarA = 0;
-    private int EScalarB = 0;
+    private int EScalarA = 2000;
+    private int EScalarB = 2000;
     private double TickToIn = 0;
 
 
@@ -115,9 +115,31 @@ public class ArmSubsystem {
         ElevatorA.setPower(0);
         return true;
     }
-    public boolean horTo(double speed,double target,int tolerance,double power) {
-        double positionA = (slideA.getCurrentPosition()/EScalarA) * TickToIn;
-        double positionB = (slideB.getCurrentPosition()/EScalarB) * TickToIn;
+    public boolean verToSimple(double target,int tolerance,double power) {
+        double positionA = (ElevatorA.getCurrentPosition()/EScalarA) * TickToIn;
+        double positionB = (ElevatorB.getCurrentPosition()/EScalarB) * TickToIn;
+        double combinedPos = (positionA+positionB)/2;
+        telemetry.addData("Arm Position A: ", positionA);
+        telemetry.addData("Arm Position B: ", positionB);
+        telemetry.update();
+        if (Math.abs(target - combinedPos) < tolerance){
+            ElevatorA.setPower(0);
+            ElevatorB.setPower(0);
+            return true;
+        }
+
+        if (combinedPos < target) {
+            ElevatorA.setPower(power);
+            ElevatorA.setPower(power);
+        } else if (combinedPos > target){
+            ElevatorA.setPower(-power);
+            ElevatorA.setPower(-power);
+        }
+        return false;
+    }
+    public boolean verTo(double speed,double target,int tolerance,double power) {
+        double positionA = (ElevatorA.getCurrentPosition()/EScalarA) * TickToIn;
+        double positionB = (ElevatorB.getCurrentPosition()/EScalarB) * TickToIn;
         double combinedPos = (positionA+positionB)/2;
         double diff = (Math.abs(positionA - positionB));
         telemetry.addData("Arm Position A: ", positionA);
@@ -131,30 +153,30 @@ public class ArmSubsystem {
 
         if (combinedPos < target) {
             if (Math.abs(positionA - positionB) < 50) {
-                slideA.setPower(power);
+                ElevatorA.setPower(power);
                 slideB.setPower(power);
             } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
-                slideA.setPower(power);
-                slideB.setPower(power + 0.001 * diff);
+                ElevatorA.setPower(power);
+                ElevatorB.setPower(power + 0.001 * diff);
             } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
-                slideB.setPower(power);
-                slideA.setPower(power+0.02 * diff);
+                ElevatorB.setPower(power);
+                ElevatorA.setPower(power+0.02 * diff);
             }
         } else if (combinedPos > target){
             if (positionA - positionB < 50) {
-                slideA.setPower(-power);
-                slideB.setPower(-power);
+                ElevatorA.setPower(-power);
+                ElevatorB.setPower(-power);
             } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
-                slideA.setPower(-power);
-                slideB.setPower(-power + 0.02);
+                ElevatorA.setPower(-power);
+                ElevatorB.setPower(-power + 0.02);
             } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
-                slideB.setPower(-power);
-                slideA.setPower(-power + 0.02);
+                ElevatorB.setPower(-power);
+                ElevatorA.setPower(-power + 0.02);
             }
         }
         return true;
     }
-    public boolean verTo(double speed,double target,int tolerance,double power) {
+    public boolean horTo(double speed,double target,int tolerance,double power) {
         double positionA = (ElevatorA.getCurrentPosition()/EScalarA)*TickToIn;
         double positionB = (ElevatorB.getCurrentPosition()/EScalarB)*TickToIn;
         double combinedPos = (positionA+positionB)/2;
