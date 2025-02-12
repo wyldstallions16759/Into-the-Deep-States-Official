@@ -10,25 +10,31 @@ import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
 @TeleOp(name = "Slide Pair Subsystem Test")
 public class SlidePairSubsystemTest extends LinearOpMode {
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         SlidePairSubsystem slides = new SlidePairSubsystem(hardwareMap,
                 "lSlide", "rSlide",
-                109, 92,
+                100, 90,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                10);
+                5);
 
         waitForStart();
+
+        double position = 0;
 
         while (opModeIsActive()){
             double input = -gamepad1.left_stick_y;
 
-            input += 1;
-            input /= 2;
+            position += input/25;
 
-            slides.slideTo(input);
+            position = Math.min(Math.max(position, 0), 1);
+
+            slides.slideTo(position);
+            telemetry.addData("rawInput", input);
 
             slides.log(telemetry);
             telemetry.update();
         }
+
+        Thread.sleep(10000);
     }
 }

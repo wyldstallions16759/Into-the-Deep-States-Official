@@ -27,7 +27,7 @@ public class ManualSlideTest extends LinearOpMode {
         while (opModeIsActive()){
             double input = -gamepad1.left_stick_y;
 
-            if (input > 0.2) {
+            if (Math.abs(input) > 0.2) {
                 slideR.setPower(input);
                 slideL.setPower(input);
             }
