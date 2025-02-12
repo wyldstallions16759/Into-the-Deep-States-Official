@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -47,6 +52,8 @@ public class XT1 extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor ElevatorA = null;
     private DcMotor ElevatorB = null;
+    public LazyImu lazyImu;
+    public IMU imu;
     private PinpointDrive drive;
     private ArmSubsystem arm;
 
@@ -59,7 +66,7 @@ public class XT1 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-
+        arm = new ArmSubsystem(hardwareMap,telemetry);
         ElevatorA = hardwareMap.get(DcMotor.class, "ElevatorA");
         ElevatorB = hardwareMap.get(DcMotor.class, "ElevatorB");
 
@@ -131,6 +138,7 @@ public class XT1 extends LinearOpMode {
             double ElevAPos = ElevatorA.getCurrentPosition();
             double ElevBPos = ElevatorB.getCurrentPosition();
             double combinedPos = ElevAPos + ElevBPos;
+//            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
 
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -148,6 +156,9 @@ public class XT1 extends LinearOpMode {
 
             if (slow_the_flip_down) {
                 max *= 5;
+            }
+            if (combinedPos>800) {
+                max *= combinedPos/800;
             }
 
             if (max > 1.0) {
@@ -188,9 +199,9 @@ public class XT1 extends LinearOpMode {
                 ElevatorB.setPower(0);
             }
             if (toSub) {
-                arm.verToSimple(1000,10,0.1);
+                arm.verToSimple(1000,100,1);
             }
-            if (ElevatorA.getCurrentPosition())
+
 
             // Wrist Subsystem calls:
 //            if (SUB) {
@@ -215,6 +226,7 @@ public class XT1 extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
             telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
+            telemetry.addData("CombinedPos",combinedPos);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
