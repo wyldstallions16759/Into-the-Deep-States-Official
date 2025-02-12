@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class SingleSlideSystem {
     private DcMotor slideMotor;
     private DcMotor.Direction direction;
@@ -54,5 +56,10 @@ public class SingleSlideSystem {
         // basically, if position is greater than our positoin, move positive (>1 == 1 in the motor's mind).
         this.slideMotor.setPower(this.targetPosition - this.getRawPosition());
         return true;
+    }
+
+    public void log(Telemetry telemetry){
+        telemetry.addData("Slide Encoder Position", this.getRawPosition());
+        telemetry.addData("Slide Fractional Position", this.getPosition());
     }
 }
