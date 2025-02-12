@@ -11,6 +11,11 @@ public class ArmSubsystem {
     // Motors for elevating and extending the arm
     private DcMotor ElevatorA = null;
     private DcMotor ElevatorB = null;
+    private DcMotor slideA = null;
+    private DcMotor slideB = null;
+    private double EScalarA = 1.00182982617;
+    private double TickToIn = 0;
+
 
     // Use to print to the driver hub
     private Telemetry telemetry;
@@ -38,6 +43,17 @@ public class ArmSubsystem {
         ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ElevatorB.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideA = hwMap.get(DcMotor.class, "ElevatorA");
+        slideA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideA.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        slideB = hwMap.get(DcMotor.class, "ElevatorB");
+        slideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideB.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     // Set the vertical target position for subsequent armUp and armDown calls
@@ -98,10 +114,93 @@ public class ArmSubsystem {
         ElevatorA.setPower(0);
         return true;
     }
+    public boolean verToSimple(double target,int tolerance,double power) {
+        double positionA = (ElevatorA.getCurrentPosition() * TickToIn);
+        double positionB = (ElevatorB.getCurrentPosition()*1.00182982617) * TickToIn;
+        double combinedPos = (positionA+positionB)/2;
+        telemetry.addData("Arm Position A: ", positionA);
+        telemetry.addData("Arm Position B: ", positionB);
+        telemetry.update();
+        if (Math.abs(target - combinedPos) < tolerance){
+            ElevatorA.setPower(0);
+            ElevatorB.setPower(0);
+            return true;
+        }
+
+        if (combinedPos < target) {
+            ElevatorA.setPower(power);
+            ElevatorB.setPower(power);
+        } else if (combinedPos > target){
+            ElevatorA.setPower(-power);
+            ElevatorB.setPower(-power);
+        }
+        return false;
+    }
+    public boolean horToSimple(double target,int tolerance,double power) {
+        double positionA = (slideA.getCurrentPosition()/EScalarA) * TickToIn;
+        double positionB = (slideB.getCurrentPosition()) * TickToIn;
+        double combinedPos = (positionA+positionB)/2;
+        telemetry.addData("Arm Position A: ", positionA);
+        telemetry.addData("Arm Position B: ", positionB);
+        telemetry.update();
+        if (Math.abs(target - combinedPos) < tolerance){
+            slideA.setPower(0);
+            slideB.setPower(0);
+            return true;
+        }
+
+        if (combinedPos < target) {
+            slideA.setPower(power);
+            slideB.setPower(power);
+        } else if (combinedPos > target){
+            slideA.setPower(-power);
+            slideB.setPower(-power);
+        }
+        return false;
+    }
     public boolean verTo(double speed,double target,int tolerance,double power) {
-        int positionA = ElevatorA.getCurrentPosition();
-        int positionB = ElevatorB.getCurrentPosition();
-        int combinedPos = (positionA+positionB)/2;
+        double positionA = (ElevatorA.getCurrentPosition()/EScalarA) * TickToIn;
+        double positionB = (ElevatorB.getCurrentPosition()) * TickToIn;
+        double combinedPos = (positionA+positionB)/2;
+        double diff = (Math.abs(positionA - positionB));
+        telemetry.addData("Arm Position A: ", positionA);
+        telemetry.addData("Arm Position B: ", positionB);
+        telemetry.update();
+        if (Math.abs(target - combinedPos) < tolerance){
+            ElevatorA.setPower(0);
+            ElevatorB.setPower(0);
+            return false;
+        }
+
+        if (combinedPos < target) {
+            if (Math.abs(positionA - positionB) < 50) {
+                ElevatorA.setPower(power);
+                ElevatorB.setPower(power);
+            } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
+                ElevatorA.setPower(power);
+                ElevatorB.setPower(power + 0.001 * diff);
+            } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
+                ElevatorB.setPower(power);
+                ElevatorA.setPower(power+0.02 * diff);
+            }
+        } else if (combinedPos > target){
+            if (positionA - positionB < 50) {
+                ElevatorA.setPower(-power);
+                ElevatorB.setPower(-power);
+            } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
+                ElevatorA.setPower(-power);
+                ElevatorB.setPower(-power + 0.02);
+            } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
+                ElevatorB.setPower(-power);
+                ElevatorA.setPower(-power + 0.02);
+            }
+        }
+        return true;
+    }
+    public boolean horTo(double speed,double target,int tolerance,double power) {
+        double positionA = (ElevatorA.getCurrentPosition()/EScalarA)*TickToIn;
+        double positionB = (ElevatorB.getCurrentPosition())*TickToIn;
+        double combinedPos = (positionA+positionB)/2;
         telemetry.addData("Arm Position A: ", positionA);
         telemetry.addData("Arm Position B: ", positionB);
         telemetry.update();
