@@ -21,11 +21,11 @@ public class WristSubsystem28147{
 
     private Telemetry telemetry;
 
-    public WristSubsystem28147(HardwareMap hardwareMap, Telemetry telemetry){
+    public WristSubsystem28147(HardwareMap hardwareMap, Telemetry telemetry, String wrist, String claw){
         this.telemetry = telemetry;
 
-        wristServo = hardwareMap.get(Servo.class, "wrist");
-        clawServo = hardwareMap.get(Servo.class, "claw");
+        wristServo = hardwareMap.get(Servo.class, wrist);
+        clawServo = hardwareMap.get(Servo.class, claw);
 
         wristServo.scaleRange(0.225, 0.925);
         clawServo.scaleRange(0.28147, 0.4); //0.5 opened sufficiently

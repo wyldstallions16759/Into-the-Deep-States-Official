@@ -23,6 +23,7 @@ public class SingleSlideSystem {
 
         this.slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.slideMotor.setDirection(this.direction);
 
         this.targetPosition = 0;
