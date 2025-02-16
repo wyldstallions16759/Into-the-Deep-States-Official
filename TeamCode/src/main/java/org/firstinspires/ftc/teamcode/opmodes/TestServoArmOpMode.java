@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-// test arm using a single servo. using two servos without testing is dangerous in case they are not calibrated.
+// unscrew one servo from the rotating thing in case they are misaligned. this should work with both servo rotating pairs on the robot.
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
