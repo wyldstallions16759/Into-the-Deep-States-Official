@@ -46,7 +46,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // initialize subsystems
-        horizontalSlides = new SlidePairSubsystem(hardwareMap,
+        /*horizontalSlides = new SlidePairSubsystem(hardwareMap,
                 "lhslide", "rhslide",
                 100, 90,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
@@ -58,11 +58,14 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
                 15); // CHANGE TOLERANCE!!!
 
+
         horizontalWrist = new WristSubsystem28147(hardwareMap, telemetry,
                 "hwrist", "hclaw");
 
         verticalWrist = new WristSubsystem28147(hardwareMap, telemetry,
                 "vwrist", "vclaw");
+
+         */
 
         // Two more subsystems required - The vertical elevator arm subsystem,
         // and the horiz end effector rotation system.
@@ -153,7 +156,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
             // END Drive Power
 
             // Start Operator Controls
-
+            /*
             // Horizontal Slides
             if (horizontalExtensionIn){
                 horizontalExtensionPosition -= HORIZONTAL_SLIDE_SPEED;
@@ -194,11 +197,14 @@ public class OfficialTeleop28147 extends LinearOpMode {
             verticalEndEffectorClawTogglePreviousState = verticalEndEffectorClawToggle;
 
             // Move Everything:
+
             horizontalSlides.slideTo(horizontalExtensionPosition);
             verticalSlides.slideTo(verticalExtensionPosition);
 
             horizontalWrist.wrist(horizontalEndEffectorWrist);
             verticalWrist.wrist(verticalEndEffectorWrist);
+
+             */
 
             /// ENABLE MANUAL OVERRIDE MODE:
             if (manualOverrideToggle && !manualOverrideTogglePreviousState){
