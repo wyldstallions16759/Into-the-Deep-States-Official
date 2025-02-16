@@ -19,6 +19,9 @@ public class TestServoArmOpMode extends LinearOpMode {
         armServo1 = hardwareMap.get(Servo.class, "leftArmServo");
         armServo2 = hardwareMap.get(Servo.class, "rightArmServo");
 
+        armServo1.setDirection(Servo.Direction.FORWARD);
+        armServo2.setDirection(Servo.Direction.REVERSE);
+
         while (opModeInInit()){
             if (gamepad1.dpad_up){
                 distance+=0.01;
@@ -34,7 +37,8 @@ public class TestServoArmOpMode extends LinearOpMode {
         waitForStart();
 
         armServo1.scaleRange(0, distance);
-        armServo2.scaleRange(1-distance, 1);
+        armServo2.scaleRange(0, distance);
+        //armServo2.scaleRange(1-distance, 1);
 
         while (opModeIsActive()){
             boolean up = gamepad1.dpad_up;
