@@ -219,9 +219,9 @@ public class OfficialTeleop28147 extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Horizontal Slides");
-            horizontalSlides.log(telemetry);
+            //horizontalSlides.log(telemetry);
             telemetry.addLine("Vertical Slides");
-            verticalSlides.log(telemetry);
+            //verticalSlides.log(telemetry);
             telemetry.update();
         }
     }}
