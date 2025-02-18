@@ -49,17 +49,29 @@ public class SingleSlideSystem {
     }
 
     public boolean run(){
+        double speed = 1;
+
         if (Math.abs(this.targetPosition - this.getRawPosition()) < this.tolerance){
+            this.slideMotor.setPower(0);
             return false;
         }
 
+        speed = Math.min(1,(double)Math.abs(this.targetPosition-this.getRawPosition())/(this.tolerance*2));
+        speed *= .6;
+
         // basically, if position is greater than our positoin, move positive (>1 == 1 in the motor's mind).
-        this.slideMotor.setPower(this.targetPosition - this.getRawPosition());
+        if (this.targetPosition > this.getRawPosition()){
+            this.slideMotor.setPower(speed);
+        }
+        else{
+            this.slideMotor.setPower(-speed);
+        }
         return true;
     }
 
     public void log(Telemetry telemetry){
         telemetry.addData("Slide Encoder Position", this.getRawPosition());
         telemetry.addData("Slide Fractional Position", this.getPosition());
+        telemetry.addData("Slide Target Position",this.targetPosition);
     }
 }

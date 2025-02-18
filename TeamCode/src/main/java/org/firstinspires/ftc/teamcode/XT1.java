@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -47,6 +52,8 @@ public class XT1 extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor ElevatorA = null;
     private DcMotor ElevatorB = null;
+    public LazyImu lazyImu;
+    public IMU imu;
     private PinpointDrive drive;
     private ArmSubsystem arm;
 
@@ -59,18 +66,16 @@ public class XT1 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-
+        arm = new ArmSubsystem(hardwareMap,telemetry);
         ElevatorA = hardwareMap.get(DcMotor.class, "ElevatorA");
         ElevatorB = hardwareMap.get(DcMotor.class, "ElevatorB");
 
         //rr
-        drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-        arm = new ArmSubsystem(hardwareMap,telemetry);
+//        arm = new ArmSubsystem(hardwareMap,telemetry);
 //        //LeftFinger = hardwareMap.get(Servo.class, "LeftFinger");
 //        RightFinger= hardwareMap.get(Servo.class, "RightFinger");
         // create subsystems
 
-        WristSubsystem Wrist = new WristSubsystem(hardwareMap, telemetry);
 //        ArmSubsystem arm = new ArmSubsystem(hardwareMap,telemetry);
 //        wristSubsystem = new WristSubsystem(hardwareMap, telemetry);
         // ########################################################################################
@@ -85,11 +90,13 @@ public class XT1 extends LinearOpMode {
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
         ElevatorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        RightFinger.scaleRange(0.4,0.7);
+        ElevatorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        ElevatorA.setDirection(DcMotor.Direction.FORWARD);
-        ElevatorB.setDirection(DcMotor.Direction.REVERSE);
+        ElevatorA.setDirection(DcMotor.Direction.REVERSE);
+        ElevatorB.setDirection(DcMotor.Direction.FORWARD);
 //        RightFinger.setDirection(Servo.Direction.FORWARD);
         ElevatorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ElevatorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -110,14 +117,14 @@ public class XT1 extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
+            double yaw = gamepad1.right_stick_y;
             boolean in = gamepad2.a;
             boolean out = gamepad2.y;
             float up = gamepad2.right_stick_y;
             float claw_in = gamepad2.right_trigger;
             float claw_out = gamepad2.left_trigger;
             float claw_toggle = gamepad2.right_trigger;
-            boolean wrist_toggle = gamepad2.b;
+            boolean toSub = gamepad2.b;
             boolean release_slightly_claw = gamepad2.left_bumper;
             boolean slow_the_flip_down = gamepad1.right_bumper;
             float claw_left_val = 0;
@@ -128,6 +135,11 @@ public class XT1 extends LinearOpMode {
             boolean SUB = gamepad2.dpad_left;
             boolean OZ = gamepad2.dpad_right;
             double dumb = 13.9;
+            double ElevAPos = ElevatorA.getCurrentPosition();
+            double ElevBPos = ElevatorB.getCurrentPosition();
+            double combinedPos = ElevAPos + ElevBPos;
+//            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
+
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -144,6 +156,9 @@ public class XT1 extends LinearOpMode {
 
             if (slow_the_flip_down) {
                 max *= 5;
+            }
+            if (combinedPos>800) {
+                max *= combinedPos/800;
             }
 
             if (max > 1.0) {
@@ -163,6 +178,7 @@ public class XT1 extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
+
             /*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
@@ -173,19 +189,21 @@ public class XT1 extends LinearOpMode {
             // Send calculated power to wheels
 
             if (up > 0.05) {
-                arm.verTo(0.1,up * 2000,20,0.1);
+                ElevatorA.setPower(-1);
+                ElevatorB.setPower(-1);
+            } else if (up < -0.05) {
+                ElevatorA.setPower(1);
+                ElevatorB.setPower(1);
             } else {
-
+                ElevatorA.setPower(0);
+                ElevatorB.setPower(0);
             }
+            if (toSub) {
+                arm.verToSimple(1000,100,1);
+            }
+
 
             // Wrist Subsystem calls:
-
-            if (claw_toggle > 0.7 && !(oldClawButton > 0.7)) {
-                Wrist.toggleClaw();
-            }
-            if (wrist_toggle && !oldWristButton) {
-                Wrist.toggleWrist();
-            }
 //            if (SUB) {
 //                SUBMERSIBLE = new Pose2D(DistanceUnit.INCH,-29 ,dumb += 2,AngleUnit.DEGREES,0);
 //                pinpoint.driveTo(SUBMERSIBLE,0.3,0);
@@ -203,13 +221,12 @@ public class XT1 extends LinearOpMode {
 //                leftBackDrive.setPower(0);
 //                rightBackDrive.setPower(0);
 //            }
-            oldWristButton = wrist_toggle;
             oldClawButton = claw_toggle;
 
             // Show the elapsed game time and wheel power.
-            PoseVelocity2d pose = drive.updatePoseEstimate();
-            telemetry.addData("PoseX", pose.component1().x);
-            telemetry.addData("PoseY", pose.component1().y);
+            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
+            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
+            telemetry.addData("CombinedPos",combinedPos);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
@@ -218,22 +235,4 @@ public class XT1 extends LinearOpMode {
 //l
     }
 
-    public boolean Extend(double inches, double speed) {
-
-        // Determine new target position. Use the current position of the LeftFrontDrive
-        int currentTarget = (int) (inches * (452.53 / (4 * 3.145)));
-
-
-        // If motors are still busy, haven't reached target
-//        if (LeftFrontDrive.isBusy() && LeftFrontDrive.isBusy() &&
-//                LeftFrontDrive.isBusy() && LeftFrontDrive.isBusy()) {
-//            return false;
-//        }
-
-        //LeftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LeftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LeftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        return true;
-    }
 }
