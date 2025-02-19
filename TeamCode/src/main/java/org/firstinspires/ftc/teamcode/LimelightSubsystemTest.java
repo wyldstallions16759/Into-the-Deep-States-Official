@@ -25,12 +25,12 @@ public class LimelightSubsystemTest extends LinearOpMode{
 
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
-                List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-                for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                    telemetry.addData("Distance", -10 / (Math.tan(Math.toRadians(fr.getTargetYDegrees()) - 10)));
+                List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                for (LLResultTypes.ColorResult cr : colorResults) {
+                    telemetry.addData("Distance", -10 / (Math.tan(Math.toRadians(cr.getTargetYDegrees()) - 10)));
                 }
 
-                telemetry.addData("Resultsize", fiducialResults.size());
+                telemetry.addData("Resultsize", colorResults.size());
             }
             telemetry.update();
         }
