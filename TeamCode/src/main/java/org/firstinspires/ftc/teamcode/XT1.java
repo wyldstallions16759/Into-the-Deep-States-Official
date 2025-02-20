@@ -8,9 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -52,10 +54,15 @@ public class XT1 extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor ElevatorA = null;
     private DcMotor ElevatorB = null;
+    private DcMotor SlideA = null;
+    private DcMotor SlideB = null;
+    private Servo IntakeA = null;
+    private Servo IntakeB = null;
     public LazyImu lazyImu;
     public IMU imu;
     private PinpointDrive drive;
     private ArmSubsystem arm;
+
 
 //    //private Servo LeftFinger = null;
 //    private Servo RightFinger = null;
@@ -67,9 +74,18 @@ public class XT1 extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         arm = new ArmSubsystem(hardwareMap,telemetry);
-        ElevatorA = hardwareMap.get(DcMotor.class, "ElevatorA");
-        ElevatorB = hardwareMap.get(DcMotor.class, "ElevatorB");
-
+        IntakeA = hardwareMap.get(Servo.class,"IntakeA");
+        IntakeB = hardwareMap.get(Servo.class,"IntakeB");
+        SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
+                "ElevatorA", "ElevatorB",
+                4000, 4000,
+                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
+                5);
+        SlidePairSubsystem Extension = new SlidePairSubsystem(hardwareMap,
+                "ElevatorA", "ElevatorB",
+                4000, 4000,
+                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
+                5);
         //rr
 //        arm = new ArmSubsystem(hardwareMap,telemetry);
 //        //LeftFinger = hardwareMap.get(Servo.class, "LeftFinger");
@@ -118,17 +134,16 @@ public class XT1 extends LinearOpMode {
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_y;
-            boolean in = gamepad2.a;
-            boolean out = gamepad2.y;
             float up = gamepad2.right_stick_y;
+            float out = gamepad2.left_stick_y;
             float claw_in = gamepad2.right_trigger;
             float claw_out = gamepad2.left_trigger;
             float claw_toggle = gamepad2.right_trigger;
             boolean toSub = gamepad2.b;
             boolean release_slightly_claw = gamepad2.left_bumper;
             boolean slow_the_flip_down = gamepad1.right_bumper;
-            float claw_left_val = 0;
-            float claw_right_val = 0;
+            float intakeIn = gamepad2.right_trigger;
+            float intakeOut = gamepad2.right_trigger;
             boolean preset_specimen = gamepad2.right_bumper;
             boolean onoroff_Specimen = false;
             boolean reset_encoders = gamepad2.x;
@@ -138,6 +153,7 @@ public class XT1 extends LinearOpMode {
             double ElevAPos = ElevatorA.getCurrentPosition();
             double ElevBPos = ElevatorB.getCurrentPosition();
             double combinedPos = ElevAPos + ElevBPos;
+            boolean firstTime = false;
 //            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
 
 
@@ -198,8 +214,25 @@ public class XT1 extends LinearOpMode {
                 ElevatorA.setPower(0);
                 ElevatorB.setPower(0);
             }
-            if (toSub) {
-                arm.verToSimple(1000,100,1);
+            if (intakeIn > 0.05) {
+                IntakeA.setPosition(1);
+                IntakeB.setPosition(1);
+            } else {
+                ElevatorA.setPower(0.5);
+                ElevatorB.setPower(0.5);
+            }
+            if (intakeOut > 0.05) {
+                IntakeA.setPosition(0);
+                IntakeB.setPosition(0);
+            } else {
+                ElevatorA.setPower(0.5);
+                ElevatorB.setPower(0.5);
+            }
+            if (toSub && !firstTime) {
+
+                firstTime = Elevation.slideTo(0.3);
+            } else {
+                firstTime = true;
             }
 
 

@@ -12,10 +12,10 @@ public class SlidePairSubsystemTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SlidePairSubsystem slides = new SlidePairSubsystem(hardwareMap,
-                "lSlide", "rSlide",
-                100, 90,
-                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                5);
+                "ElevatorA", "ElevatorB",
+                4000, 4000,
+                DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
+                100);
 
         waitForStart();
 
@@ -23,14 +23,15 @@ public class SlidePairSubsystemTest extends LinearOpMode {
 
         while (opModeIsActive()){
             double input = -gamepad1.left_stick_y;
-
+            boolean firstTime = false;
             position += input/25;
 
             position = Math.min(Math.max(position, 0), 1);
-
-            slides.slideTo(position);
+            if (!firstTime) {
+                firstTime = slides.slideTo(position);
+            }
             telemetry.addData("rawInput", input);
-
+            telemetry.addData("position", position);
             slides.log(telemetry);
             telemetry.update();
         }
