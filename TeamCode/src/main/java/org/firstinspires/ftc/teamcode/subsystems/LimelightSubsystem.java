@@ -10,8 +10,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.List;
 
 public class LimelightSubsystem {
-    Limelight3A limelight;
-    Telemetry telemetry;
+    private Limelight3A limelight;
+    private Telemetry telemetry;
+    static final double camHeightOffGround = 13;
+    double blockHeightOffGround = 1.4;
+    double heightOffGround = blockHeightOffGround-camHeightOffGround;
+    static final double a1 = 0;
+    List<List<Double>> corners;
+    double distance;
     public LimelightSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         this.telemetry = telemetry;
@@ -21,15 +27,34 @@ public class LimelightSubsystem {
     }
     //Get distance from ____ to the block
     public double distanceFrom(){
+        double heightOffGround = blockHeightOffGround-camHeightOffGround;
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-//                telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-//                telemetry.update();
-                return -10/(Math.tan(Math.toRadians(fr.getTargetYDegrees())-10));
+            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+            for (LLResultTypes.ColorResult cr : colorResults) {
+                distance = heightOffGround / (Math.tan(Math.toRadians(cr.getTargetYDegrees()) - a1));
+            }
+            if (!colorResults.isEmpty()) {
+                return distance;
             }
         }
         return 0;
+    }
+    // 0= tan^-1 y2-y1/x2-x1
+    //1 is a corner
+    //2 is a corner next to it
+
+    public List<List<Double>> orientationOf(){
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+            for (LLResultTypes.ColorResult cr : colorResults) {
+                corners = cr.getTargetCorners();
+            }
+            if (!corners.isEmpty()) {
+                return corners;
+            }
+        }
+        return java.util.Collections.emptyList();
     }
 }
