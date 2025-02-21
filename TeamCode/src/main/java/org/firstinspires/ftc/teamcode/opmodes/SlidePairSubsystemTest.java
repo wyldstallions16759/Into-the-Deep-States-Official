@@ -12,10 +12,10 @@ public class SlidePairSubsystemTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SlidePairSubsystem slides = new SlidePairSubsystem(hardwareMap,
-                "lSlide", "rSlide",
-                100, 90,
+                "rvslide", "lvslide",
+                3000, 3000,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                5);
+                25, 1);
 
         waitForStart();
 

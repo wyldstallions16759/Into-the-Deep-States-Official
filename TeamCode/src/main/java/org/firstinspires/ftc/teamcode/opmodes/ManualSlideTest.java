@@ -8,12 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class ManualSlideTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        DcMotor slideR = hardwareMap.get(DcMotor.class, "rSlide");
-        DcMotor slideL = hardwareMap.get(DcMotor.class, "lSlide");
+        DcMotor slideR = hardwareMap.get(DcMotor.class, "rvslide");
+        DcMotor slideL = hardwareMap.get(DcMotor.class, "lvslide");
 
         // Reverse right slide
         slideR.setDirection(DcMotor.Direction.REVERSE);
         slideL.setDirection(DcMotor.Direction.FORWARD);
+        slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // reset encoders
         slideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

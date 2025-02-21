@@ -16,11 +16,11 @@ public class TestServoArmOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        armServo1 = hardwareMap.get(Servo.class, "leftArmServo");
-        armServo2 = hardwareMap.get(Servo.class, "rightArmServo");
+        armServo1 = hardwareMap.get(Servo.class, "laservo");
+        armServo2 = hardwareMap.get(Servo.class, "raservo");
 
-        armServo1.setDirection(Servo.Direction.FORWARD);
-        armServo2.setDirection(Servo.Direction.REVERSE);
+        //armServo1.setDirection(Servo.Direction.FORWARD);
+        //armServo2.setDirection(Servo.Direction.REVERSE);
 
         while (opModeInInit()){
             if (gamepad1.dpad_up){
@@ -36,9 +36,9 @@ public class TestServoArmOpMode extends LinearOpMode {
 
         waitForStart();
 
-        armServo1.scaleRange(0, distance);
-        armServo2.scaleRange(0, distance);
-        //armServo2.scaleRange(1-distance, 1);
+        armServo1.scaleRange(0, 1-distance);
+        //armServo2.scaleRange(0, 1-distance);
+        armServo2.scaleRange(distance, 1);
 
         while (opModeIsActive()){
             boolean up = gamepad1.dpad_up;
@@ -51,6 +51,12 @@ public class TestServoArmOpMode extends LinearOpMode {
             else if (down){
                 armServo1.setPosition(1);
                 armServo2.setPosition(0);
+            }
+            else{
+                double in = gamepad1.left_stick_y;
+                double pulse = (in+1)/2;
+                armServo1.setPosition(pulse);
+                armServo2.setPosition(1-pulse);
             }
         }
     }

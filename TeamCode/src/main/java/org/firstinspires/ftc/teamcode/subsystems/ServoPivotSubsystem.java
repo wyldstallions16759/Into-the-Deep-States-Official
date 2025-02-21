@@ -7,17 +7,26 @@ public class ServoPivotSubsystem {
 
     public static enum PartType{
         VERTICAL_EXTENSION_ARM,
+        VERTICAL_EXTENSION_BASE,
         HORIZONTAL_EXTENSION_JOINT
     }
 
     public static final double VERTICAL_EXTENSION_ARM_ROTATION = 0;
-    public static final double HORIZONTAL_EXTENSION_JOIN_ROTATION = 0;
+    public static final double HORIZONTAL_EXTENSION_JOIN_ROTATION = 0.3;
+    public static final double VERTICAL_EXTENSION_BASE_ROTATION = 0;
 
-    public static final double RESTING_PRESET = 0;
-    public static final double RAISED_PRESET = 0.5;
+    public static final double RESTING_PRESET_HORIZ = 0;
+    public static final double RESTING_PRESET_VERT_BASE = 0;
+    public static final double RESTING_PRESET_VERT = 0;
+
+    public static final double RAISED_PRESET_HORIZ = 1;
+    public static final double RAISED_PRESET_VERT_BASE = 1;
+    public static final double RAISED_PRESET_VERT = 1;
+
 
     private Servo leftServo;
     private Servo rightServo;
+    private PartType type;
 
     public ServoPivotSubsystem(HardwareMap hardwareMap, String leftServoName, String rightServoName, PartType type){
         this.leftServo = hardwareMap.get(Servo.class, leftServoName);
@@ -25,10 +34,11 @@ public class ServoPivotSubsystem {
         leftServo.setDirection(Servo.Direction.FORWARD);
         rightServo.setDirection(Servo.Direction.REVERSE);
 
-        double dist = (type == PartType.VERTICAL_EXTENSION_ARM)?VERTICAL_EXTENSION_ARM_ROTATION:HORIZONTAL_EXTENSION_JOIN_ROTATION;
-        leftServo.scaleRange(0, dist);
-        rightServo.scaleRange(0, dist);
-        //armServo2.scaleRange(1-distance, 1);
+        double dist = (type == PartType.VERTICAL_EXTENSION_ARM)?VERTICAL_EXTENSION_ARM_ROTATION:(type == PartType.HORIZONTAL_EXTENSION_JOINT)?HORIZONTAL_EXTENSION_JOIN_ROTATION:VERTICAL_EXTENSION_BASE_ROTATION;
+        leftServo.scaleRange(0, 1-dist);
+        rightServo.scaleRange(dist, 1);
+
+        this.type = type;
     }
 
     public void armToCustom(double position){
@@ -38,10 +48,24 @@ public class ServoPivotSubsystem {
     }
 
     public void armToRest(){
-        this.armToCustom(RESTING_PRESET);
+        double rest = RESTING_PRESET_HORIZ;
+        if (type == PartType.VERTICAL_EXTENSION_ARM){
+            rest = RESTING_PRESET_VERT;
+        }
+        else if (type == PartType.VERTICAL_EXTENSION_BASE){
+            rest = RESTING_PRESET_VERT_BASE;
+        }
+        this.armToCustom(rest);
     }
 
     public void armToRaised(){
-        this.armToCustom(RAISED_PRESET);
+        double raise = RAISED_PRESET_HORIZ;
+        if (type == PartType.VERTICAL_EXTENSION_ARM){
+            raise = RAISED_PRESET_VERT;
+        }
+        else if (type == PartType.VERTICAL_EXTENSION_BASE){
+            raise = RAISED_PRESET_VERT_BASE;
+        }
+        this.armToCustom(raise);
     }
 }

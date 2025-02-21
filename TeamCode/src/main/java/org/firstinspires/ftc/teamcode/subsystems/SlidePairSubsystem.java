@@ -14,10 +14,9 @@ public class SlidePairSubsystem {
     public SlidePairSubsystem(HardwareMap hardwareMap, String identifierA, String identifierB,
                               int maxExtA, int maxExtB,
                               DcMotor.Direction dirA, DcMotor.Direction dirB,
-                              int tolerance){
-        this.slideA = new SingleSlideSystem(hardwareMap, identifierA, maxExtA, dirA, tolerance);
-        this.slideB = new SingleSlideSystem(hardwareMap, identifierB, maxExtB, dirB, tolerance);
-
+                              int tolerance, double speed){
+        this.slideA = new SingleSlideSystem(hardwareMap, identifierA, maxExtA, dirA, tolerance, speed);
+        this.slideB = new SingleSlideSystem(hardwareMap, identifierB, maxExtB, dirB, tolerance, speed);
         this.targetFraction = 0;
     }
 

@@ -5,15 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 
-@TeleOp(name="Official Teleop 28147")
+@TeleOp(name="Official Teleop 28147", group = "AAOpmodes")//make it appear at top
 public class OfficialTeleop28147 extends LinearOpMode {
     final double TRIGGER_TOLERANCE = 0.4;
-    final double HORIZONTAL_SLIDE_SPEED = 0.025; // Tune this to Operator's liking.
-    final double VERTICAL_EXTENSION_SUBMERSIBLE = 0.2; // Tune this to submersible height
-    final double VERTICAL_EXTENSION_SPEED = 0.025; // Tune this to Operator's liking. Only used during Manual Override mode.
+    final double HORIZONTAL_SLIDE_SPEED = 1; // Tune this to Operator's liking.
+    final double VERTICAL_EXTENSION_SPEED = 1; // Tune this to Operator's liking.
+    final double ROLL_SPEED = 0.01;
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -22,11 +23,17 @@ public class OfficialTeleop28147 extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
-    private SlidePairSubsystem horizontalSlides;
-    private SlidePairSubsystem verticalSlides;
+    private DcMotor lhSlide;
+    private DcMotor rhSlide;
+    private DcMotor lvSlide;
+    private DcMotor rvSlide;
 
     private WristSubsystem28147 horizontalWrist;
     private WristSubsystem28147 verticalWrist;
+
+    private ServoPivotSubsystem bottomRoll;
+    private ServoPivotSubsystem armBase;
+    private ServoPivotSubsystem armWrist;
 
     @Override
     public void runOpMode() {
@@ -44,30 +51,44 @@ public class OfficialTeleop28147 extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        // initialize subsystems
-        /*horizontalSlides = new SlidePairSubsystem(hardwareMap,
-                "lhslide", "rhslide",
-                100, 90,
-                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                5);
+        /// set to brake mode
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        verticalSlides = new SlidePairSubsystem(hardwareMap,
-                "lvslide", "rvslide",
-                100, 90, // CHANGE THESE VALUES!!!!
-                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                15); // CHANGE TOLERANCE!!!
 
+        // initialize subsystems and motors
+
+        lhSlide = hardwareMap.get(DcMotor.class, "lhslide");
+        rhSlide = hardwareMap.get(DcMotor.class, "rhslide");
+
+        rhSlide.setDirection(DcMotor.Direction.REVERSE);
+        lhSlide.setDirection(DcMotor.Direction.FORWARD);
+        rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lvSlide = hardwareMap.get(DcMotor.class, "lvslide");
+        rvSlide = hardwareMap.get(DcMotor.class, "rvslide");
+
+        rvSlide.setDirection(DcMotor.Direction.FORWARD);
+        lvSlide.setDirection(DcMotor.Direction.REVERSE);
+
+        rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         horizontalWrist = new WristSubsystem28147(hardwareMap, telemetry,
-                "hwrist", "hclaw");
+                "bottomclawwrist", "bottomclaw");
 
         verticalWrist = new WristSubsystem28147(hardwareMap, telemetry,
-                "vwrist", "vclaw");
+                "topclawwrist", "topclaw");
 
-         */
+        bottomRoll = new ServoPivotSubsystem(hardwareMap, "lrollbottom", "rrollbottom", ServoPivotSubsystem.PartType.HORIZONTAL_EXTENSION_JOINT);
+        armBase = new ServoPivotSubsystem(hardwareMap, "larmbase","rarmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
+        armWrist = new ServoPivotSubsystem(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
         // Two more subsystems required - The vertical elevator arm subsystem,
-        // and the horiz end effector rotation system.
+        // and the horiz end effector rotation system. "BottomRoll" is the horiz rotation.
 
 
         // Wait for the game to start (driver presses START)
@@ -82,15 +103,12 @@ public class OfficialTeleop28147 extends LinearOpMode {
         // VERY DANGEROUS IF ACCIDENTALLY TOGGLED. CONTROLLER WILL RUMBLE WHEN ENABLED/DISABLED.
         // DISABLED BY DEFAULT. IF SOMETHING BREAKS, OPERATOR CAN SWITCH INTO MANUAL OVERRIDE MODE.
         // IF WE ARE USING THE LOGITECH CONTROLLERS, RUMBLE WILL NOT WORK. IT WILL DISPLAY ON TELEMETRY
-        // ON THE FIRST LINE. COACH WILL KNOW HOW TO SEE IT OR SOMETHING.
+        // ON THE FIRST LINE. COACH WILL KNOW HOW TO SEE IT OR SOMETHING. PROBABLY WON'T DO ANYTHING
 
         boolean manualOverrideTogglePreviousState = false;
 
         boolean horizontalEndEffectorClawTogglePreviousState = false;
         boolean verticalEndEffectorClawTogglePreviousState = false;
-
-        double horizontalExtensionPosition = 0;
-        double verticalExtensionPosition = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -103,26 +121,36 @@ public class OfficialTeleop28147 extends LinearOpMode {
             boolean slowDown = gamepad1.right_bumper;
 
             // Operator Controls
-            boolean manualOverrideToggle = gamepad2.back; // figure out what button this is.
+            boolean manualOverrideToggle = gamepad2.back; // figure out what button this is. probably wont do anything.
 
+            //horizontal extension (manual0
             boolean horizontalExtensionOut = gamepad2.dpad_up;
             boolean horizontalExtensionIn = gamepad2.dpad_down;
 
-            double horizontalEndEffectorRotate = -gamepad2.right_stick_y;
+            //horiz endeffector
+            double horizontalArmRotate = -gamepad2.right_stick_y; // make this one STICKY!
+            double horizontalArmPosition = 0.5;
+
             double horizontalEndEffectorWrist = gamepad2.right_stick_x;
             boolean horizontalEndEffectorClawToggle = gamepad2.right_trigger > TRIGGER_TOLERANCE;
 
-            boolean verticalExtensionUp = gamepad2.y; // go to up preset
-            boolean verticalExtensionDown = gamepad2.a; // go to down preset
+            //vertical extension (manual)
+            boolean verticalExtensionUp = gamepad2.y; // go to up
+            boolean verticalExtensionDown = gamepad2.a; // go to down
 
-            //double verticalEndEffectorArmRotate = -gamepad2.left_stick_y;
-
+            // vertical arm servos (work together, two presets in one)
             boolean verticalArmRotateUp = gamepad2.dpad_left;
             boolean verticalArmRotateDown = gamepad2.dpad_right;
 
+            // override wristarm
+            double manualArmWristPos = -gamepad2.left_stick_y;
+            boolean manualOverrideArmWrist = gamepad2.left_bumper;
+
+            // vertical wristclaw
             double verticalEndEffectorWrist = gamepad2.left_stick_x;
             boolean verticalEndEffectorClawToggle = gamepad2.left_trigger > TRIGGER_TOLERANCE;
 
+            telemetry.addData("vertical in button", gamepad2.left_trigger);
 
             // Drive Power:
             double leftFrontPower  = axial + lateral + yaw;
@@ -137,7 +165,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (slowDown){
-                max *= 5;
+                max *= 3.3;
             }
 
             if (max > 1.0) {
@@ -155,31 +183,52 @@ public class OfficialTeleop28147 extends LinearOpMode {
             // END Drive Power
 
             // Start Operator Controls
-            /*
+
             // Horizontal Slides
             if (horizontalExtensionIn){
-                horizontalExtensionPosition -= HORIZONTAL_SLIDE_SPEED;
+                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                rhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
+                lhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
             }
             else if (horizontalExtensionOut){
-                horizontalExtensionPosition += HORIZONTAL_SLIDE_SPEED;
+                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                rhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
+                lhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
+            }
+            else{
+                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+                rhSlide.setPower(0);
+                lhSlide.setPower(0);
             }
 
-            horizontalExtensionPosition = Math.min(Math.max(0, horizontalExtensionPosition), 1);
+            if (verticalExtensionDown){
+                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-            // Vertical Slides
-            if (verticalExtensionUp) {
-                if (manualOverride){
-                    verticalExtensionPosition += VERTICAL_EXTENSION_SPEED;
-                } else {
-                    verticalExtensionPosition = VERTICAL_EXTENSION_SUBMERSIBLE;
-                }
-            } else if (verticalExtensionDown) {
-                if (manualOverride) {
-                    verticalExtensionPosition -= VERTICAL_EXTENSION_SPEED;
-                } else {
-                    verticalExtensionPosition = 0;
-                }
+                rvSlide.setPower(-VERTICAL_EXTENSION_SPEED);
+                lvSlide.setPower(-VERTICAL_EXTENSION_SPEED);
             }
+            else if (verticalExtensionUp){
+                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                rvSlide.setPower(VERTICAL_EXTENSION_SPEED);
+                lvSlide.setPower(VERTICAL_EXTENSION_SPEED);
+            }
+            else{
+                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+                rvSlide.setPower(0);
+                lvSlide.setPower(0);
+            }
+
 
             // horizontal/vertical end effector - wrist/claw:
             /// WRIST WILL BE DONE ONLY IN THE "MOVE EVERYTHING" SECTION
@@ -197,13 +246,38 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
             // Move Everything:
 
-            horizontalSlides.slideTo(horizontalExtensionPosition);
-            verticalSlides.slideTo(verticalExtensionPosition);
+           // horizontalSlides.slideTo(horizontalExtensionPosition);
+            //verticalSlides.slideTo(verticalExtensionPosition);
 
             horizontalWrist.wrist(horizontalEndEffectorWrist);
             verticalWrist.wrist(verticalEndEffectorWrist);
 
-             */
+            // arm and roll
+            if (horizontalArmRotate > TRIGGER_TOLERANCE) {
+                horizontalArmPosition += ROLL_SPEED;
+            }
+            else if (horizontalArmRotate < -TRIGGER_TOLERANCE){
+                horizontalArmPosition -= ROLL_SPEED;
+            }
+            horizontalArmPosition = Math.min(1,Math.max(horizontalArmPosition, 0)); // limit it to 0-1
+
+            bottomRoll.armToCustom(horizontalArmPosition);
+
+            // arm on the vertical extension slides.
+            if (verticalArmRotateUp){
+                armBase.armToRaised();
+                armWrist.armToRaised();
+            }
+            else if (verticalArmRotateDown){
+                armBase.armToRest();
+                armWrist.armToRest();
+            }
+
+            if (manualOverrideArmWrist){
+                armWrist.armToCustom((manualArmWristPos+1)/2);
+            }
+
+
 
             /// ENABLE MANUAL OVERRIDE MODE:
             if (manualOverrideToggle && !manualOverrideTogglePreviousState){

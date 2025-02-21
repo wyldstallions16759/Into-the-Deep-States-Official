@@ -10,14 +10,16 @@ public class SingleSlideSystem {
     private DcMotor.Direction direction;
     private int maxExtension;
     private int tolerance;
+    private double speed;
 
     private int targetPosition;
 
 
-    public SingleSlideSystem(HardwareMap hardwareMap, String identifier, int maxExtend, DcMotor.Direction direction, int tolerance){
+    public SingleSlideSystem(HardwareMap hardwareMap, String identifier, int maxExtend, DcMotor.Direction direction, int tolerance, double speed){
         this.slideMotor = hardwareMap.get(DcMotor.class, identifier);
         this.maxExtension = maxExtend;
         this.direction = direction;
+        this.speed = speed;
 
         this.tolerance = tolerance;
 
@@ -50,7 +52,6 @@ public class SingleSlideSystem {
     }
 
     public boolean run(){
-        double speed = 1;
 
         if (Math.abs(this.targetPosition - this.getRawPosition()) < this.tolerance){
             this.slideMotor.setPower(0);
@@ -58,7 +59,7 @@ public class SingleSlideSystem {
         }
 
         speed = Math.min(1,(double)Math.abs(this.targetPosition-this.getRawPosition())/(this.tolerance*2));
-        speed *= .6;
+        speed *= this.speed;
 
         // basically, if position is greater than our positoin, move positive (>1 == 1 in the motor's mind).
         if (this.targetPosition > this.getRawPosition()){

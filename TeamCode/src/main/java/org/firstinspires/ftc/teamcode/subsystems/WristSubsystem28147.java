@@ -28,7 +28,7 @@ public class WristSubsystem28147{
         clawServo = hardwareMap.get(Servo.class, claw);
 
         wristServo.scaleRange(0.225, 0.925);
-        clawServo.scaleRange(0.28147, 0.4); //0.5 opened sufficiently
+        clawServo.scaleRange(0.28147, 0.43); //0.5 opened sufficiently
 
         this.claw(ClawState.CLOSED);
         //this.wrist(0);
