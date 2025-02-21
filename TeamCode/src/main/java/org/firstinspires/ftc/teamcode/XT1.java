@@ -58,6 +58,12 @@ public class XT1 extends LinearOpMode {
     private DcMotor SlideB = null;
     private Servo IntakeA = null;
     private Servo IntakeB = null;
+    private Servo IntakeElevationA = null;
+    private Servo IntakeElevationB = null;
+    private Servo PendulumA = null;
+    private Servo PendulumB = null;
+    private Servo Wrist = null;
+    private Servo Claw = null;
     public LazyImu lazyImu;
     public IMU imu;
     private PinpointDrive drive;
@@ -76,6 +82,15 @@ public class XT1 extends LinearOpMode {
         arm = new ArmSubsystem(hardwareMap,telemetry);
         IntakeA = hardwareMap.get(Servo.class,"IntakeA");
         IntakeB = hardwareMap.get(Servo.class,"IntakeB");
+        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
+        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
+        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
+        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
+        IntakeA.setDirection(Servo.Direction.REVERSE);
+        PendulumA.setDirection(Servo.Direction.REVERSE);
+        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
+
+
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
                 "ElevatorA", "ElevatorB",
                 4000, 4000,
@@ -140,10 +155,14 @@ public class XT1 extends LinearOpMode {
             float claw_out = gamepad2.left_trigger;
             float claw_toggle = gamepad2.right_trigger;
             boolean toSub = gamepad2.b;
+            boolean toGround = gamepad2.a;
             boolean release_slightly_claw = gamepad2.left_bumper;
             boolean slow_the_flip_down = gamepad1.right_bumper;
             float intakeIn = gamepad2.right_trigger;
-            float intakeOut = gamepad2.right_trigger;
+            float intakeOut = gamepad2.left_trigger;
+            boolean sampleReady = gamepad2.right_bumper;
+            boolean wallReady = gamepad2.x;
+            boolean specimenReady = gamepad2.left_bumper;
             boolean preset_specimen = gamepad2.right_bumper;
             boolean onoroff_Specimen = false;
             boolean reset_encoders = gamepad2.x;
@@ -183,7 +202,44 @@ public class XT1 extends LinearOpMode {
                 leftBackPower /= max;
                 rightBackPower /= max;
             }
-
+            if (sampleReady) {
+                PendulumA.setPosition(180/300);
+                PendulumB.setPosition(180/300);
+                Wrist.setPosition(0);
+            } else {
+                PendulumA.setPosition(90/300);
+                PendulumB.setPosition(90/300);
+            }
+            if (wallReady) {
+                PendulumA.setPosition(90/300);
+                PendulumB.setPosition(90/300);
+                sleep(300);
+                Wrist.setPosition(180/300);
+                sleep(300);
+                PendulumA.setPosition(0);
+                PendulumB.setPosition(0);
+            } else {
+                PendulumA.setPosition(90/300);
+                PendulumB.setPosition(90/300);
+                Wrist.setPosition(0);
+            }
+            if (specimenReady) {
+                PendulumA.setPosition(180/300);
+                PendulumB.setPosition(180/300);
+                sleep(300);
+                Wrist.setPosition(0);
+            } else {
+                PendulumA.setPosition(90/300);
+                PendulumB.setPosition(90/300);
+                Wrist.setPosition(0);
+            }
+            if (toGround) {
+                IntakeElevationA.setPosition(45/300);
+                IntakeElevationB.setPosition(45/300);
+            } else {
+                IntakeElevationA.setPosition(0);
+                IntakeElevationB.setPosition(0);
+            }
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
