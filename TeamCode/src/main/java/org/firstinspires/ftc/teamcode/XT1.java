@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -80,15 +81,28 @@ public class XT1 extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         arm = new ArmSubsystem(hardwareMap,telemetry);
-        IntakeA = hardwareMap.get(Servo.class,"IntakeA");
-        IntakeB = hardwareMap.get(Servo.class,"IntakeB");
-        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
-        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
-        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
-        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
-        IntakeA.setDirection(Servo.Direction.REVERSE);
-        PendulumA.setDirection(Servo.Direction.REVERSE);
-        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
+//        IntakeA = hardwareMap.get(Servo.class,"IntakeA");
+//        IntakeB = hardwareMap.get(Servo.class,"IntakeB");
+//        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
+//        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
+//        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
+//        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
+//        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
+//        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
+//        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
+//        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+//        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+//        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+//        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+//        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+////        RightFinger.setDirection(Servo.Direction.FORWARD);
+//        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        IntakeA.setDirection(Servo.Direction.REVERSE);
+//        PendulumA.setDirection(Servo.Direction.REVERSE);
+//        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
@@ -120,17 +134,17 @@ public class XT1 extends LinearOpMode {
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
-        ElevatorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        RightFinger.scaleRange(0.4,0.7);
-        ElevatorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        ElevatorA.setDirection(DcMotor.Direction.REVERSE);
-        ElevatorB.setDirection(DcMotor.Direction.FORWARD);
-//        RightFinger.setDirection(Servo.Direction.FORWARD);
-        ElevatorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ElevatorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        ElevatorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////        RightFinger.scaleRange(0.4,0.7);
+//        ElevatorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//        ElevatorA.setDirection(DcMotor.Direction.REVERSE);
+//        ElevatorB.setDirection(DcMotor.Direction.FORWARD);
+////        RightFinger.setDirection(Servo.Direction.FORWARD);
+//        ElevatorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        ElevatorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -169,9 +183,9 @@ public class XT1 extends LinearOpMode {
             boolean SUB = gamepad2.dpad_left;
             boolean OZ = gamepad2.dpad_right;
             double dumb = 13.9;
-            double ElevAPos = ElevatorA.getCurrentPosition();
-            double ElevBPos = ElevatorB.getCurrentPosition();
-            double combinedPos = ElevAPos + ElevBPos;
+//            double ElevAPos = ElevatorA.getCurrentPosition();
+//            double ElevBPos = ElevatorB.getCurrentPosition();
+//            double combinedPos = ElevAPos + ElevBPos;
             boolean firstTime = false;
 //            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
 
@@ -192,9 +206,9 @@ public class XT1 extends LinearOpMode {
             if (slow_the_flip_down) {
                 max *= 5;
             }
-            if (combinedPos>800) {
-                max *= combinedPos/800;
-            }
+//            if (combinedPos>800) {
+//                max *= combinedPos/800;
+//            }
 
             if (max > 1.0) {
                 leftFrontPower /= max;
@@ -202,44 +216,44 @@ public class XT1 extends LinearOpMode {
                 leftBackPower /= max;
                 rightBackPower /= max;
             }
-            if (sampleReady) {
-                PendulumA.setPosition(180/300);
-                PendulumB.setPosition(180/300);
-                Wrist.setPosition(0);
-            } else {
-                PendulumA.setPosition(90/300);
-                PendulumB.setPosition(90/300);
-            }
-            if (wallReady) {
-                PendulumA.setPosition(90/300);
-                PendulumB.setPosition(90/300);
-                sleep(300);
-                Wrist.setPosition(180/300);
-                sleep(300);
-                PendulumA.setPosition(0);
-                PendulumB.setPosition(0);
-            } else {
-                PendulumA.setPosition(90/300);
-                PendulumB.setPosition(90/300);
-                Wrist.setPosition(0);
-            }
-            if (specimenReady) {
-                PendulumA.setPosition(180/300);
-                PendulumB.setPosition(180/300);
-                sleep(300);
-                Wrist.setPosition(0);
-            } else {
-                PendulumA.setPosition(90/300);
-                PendulumB.setPosition(90/300);
-                Wrist.setPosition(0);
-            }
-            if (toGround) {
-                IntakeElevationA.setPosition(45/300);
-                IntakeElevationB.setPosition(45/300);
-            } else {
-                IntakeElevationA.setPosition(0);
-                IntakeElevationB.setPosition(0);
-            }
+//            if (sampleReady) {
+//                PendulumA.setPosition(180/300);
+//                PendulumB.setPosition(180/300);
+//                Wrist.setPosition(0);
+//            } else {
+//                PendulumA.setPosition(90/300);
+//                PendulumB.setPosition(90/300);
+//            }
+//            if (wallReady) {
+//                PendulumA.setPosition(90/300);
+//                PendulumB.setPosition(90/300);
+//                sleep(300);
+//                Wrist.setPosition(180/300);
+//                sleep(300);
+//                PendulumA.setPosition(0);
+//                PendulumB.setPosition(0);
+//            } else {
+//                PendulumA.setPosition(90/300);
+//                PendulumB.setPosition(90/300);
+//                Wrist.setPosition(0);
+//            }
+//            if (specimenReady) {
+//                PendulumA.setPosition(180/300);
+//                PendulumB.setPosition(180/300);
+//                sleep(300);
+//                Wrist.setPosition(0);
+//            } else {
+//                PendulumA.setPosition(90/300);
+//                PendulumB.setPosition(90/300);
+//                Wrist.setPosition(0);
+//            }
+//            if (toGround) {
+//                IntakeElevationA.setPosition(45/300);
+//                IntakeElevationB.setPosition(45/300);
+//            } else {
+//                IntakeElevationA.setPosition(0);
+//                IntakeElevationB.setPosition(0);
+//            }
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
@@ -257,40 +271,45 @@ public class XT1 extends LinearOpMode {
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             */
+            if (toSub) {
+                Elevation.slideTo(0.3);
+            }
 
             // Send calculated power to wheels
-
-            if (up > 0.05) {
-                ElevatorA.setPower(-1);
-                ElevatorB.setPower(-1);
-            } else if (up < -0.05) {
-                ElevatorA.setPower(1);
-                ElevatorB.setPower(1);
-            } else {
-                ElevatorA.setPower(0);
-                ElevatorB.setPower(0);
-            }
-            if (intakeIn > 0.05) {
-                IntakeA.setPosition(1);
-                IntakeB.setPosition(1);
-            } else {
-                ElevatorA.setPower(0.5);
-                ElevatorB.setPower(0.5);
-            }
-            if (intakeOut > 0.05) {
-                IntakeA.setPosition(0);
-                IntakeB.setPosition(0);
-            } else {
-                ElevatorA.setPower(0.5);
-                ElevatorB.setPower(0.5);
-            }
+//            leftFrontDrive.setPower(leftFrontPower);
+//            rightFrontDrive.setPower(rightFrontPower);
+//            leftBackDrive.setPower(leftBackPower);
+//            rightBackDrive.setPower(rightBackPower);
+//            if (up > 0.05) {
+//                ElevatorA.setPower(-1);
+//                ElevatorB.setPower(-1);
+//            } else if (up < -0.05) {
+//                ElevatorA.setPower(1);
+//                ElevatorB.setPower(1);
+//            } else {
+//                ElevatorA.setPower(0);
+//                ElevatorB.setPower(0);
+//            }
+//            if (intakeIn > 0.05) {
+//                IntakeA.setPosition(1);
+//                IntakeB.setPosition(1);
+//            } else {
+//                ElevatorA.setPower(0.5);
+//                ElevatorB.setPower(0.5);
+//            }
+//            if (intakeOut > 0.05) {
+//                IntakeA.setPosition(0);
+//                IntakeB.setPosition(0);
+//            } else {
+//                ElevatorA.setPower(0.5);
+//                ElevatorB.setPower(0.5);
+//            }
             if (toSub && !firstTime) {
 
                 firstTime = Elevation.slideTo(0.3);
             } else {
                 firstTime = true;
             }
-
 
             // Wrist Subsystem calls:
 //            if (SUB) {
@@ -313,9 +332,9 @@ public class XT1 extends LinearOpMode {
             oldClawButton = claw_toggle;
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
-            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
-            telemetry.addData("CombinedPos",combinedPos);
+//            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
+//            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
+//            telemetry.addData("CombinedPos",combinedPos);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);

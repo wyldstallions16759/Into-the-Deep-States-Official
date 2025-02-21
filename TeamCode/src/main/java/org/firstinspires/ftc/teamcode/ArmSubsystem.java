@@ -137,8 +137,8 @@ public class ArmSubsystem {
         return false;
     }
     public boolean horToSimple(double target,int tolerance,double power) {
-        double positionA = (slideA.getCurrentPosition()/EScalarA) * TickToIn;
-        double positionB = (slideB.getCurrentPosition()) * TickToIn;
+        double positionA = (ElevatorA.getCurrentPosition()/EScalarA) * TickToIn;
+        double positionB = (ElevatorB.getCurrentPosition()) * TickToIn;
         double combinedPos = (positionA+positionB)/2;
         telemetry.addData("Arm Position A: ", positionA);
         telemetry.addData("Arm Position B: ", positionB);
@@ -159,43 +159,43 @@ public class ArmSubsystem {
         return false;
     }
     public boolean verTo(double speed,double target,int tolerance,double power) {
-        double positionA = (ElevatorA.getCurrentPosition()/EScalarA) * TickToIn;
-        double positionB = (ElevatorB.getCurrentPosition()) * TickToIn;
-        double combinedPos = (positionA+positionB)/2;
+        double positionA = ElevatorA.getCurrentPosition();
+        double positionB = ElevatorB.getCurrentPosition();
+//        double combinedPos = (positionA+positionB)/2;
         double diff = (Math.abs(positionA - positionB));
         telemetry.addData("Arm Position A: ", positionA);
         telemetry.addData("Arm Position B: ", positionB);
         telemetry.update();
-        if (Math.abs(target - combinedPos) < tolerance){
+        if (Math.abs(target - positionA) < tolerance){
             ElevatorA.setPower(0);
             ElevatorB.setPower(0);
-            return false;
+            return true;
         }
 
-        if (combinedPos < target) {
-            if (Math.abs(positionA - positionB) < 50) {
+        if (positionA < target) {
+            if (diff < 50) {
                 ElevatorA.setPower(power);
                 ElevatorB.setPower(power);
-            } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
+            } else if (positionA > positionB && (diff > 50)) {
                 ElevatorA.setPower(power);
                 ElevatorB.setPower(power + 0.001 * diff);
-            } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
+            } else if (positionB > positionA && (diff > 50)) {
                 ElevatorB.setPower(power);
                 ElevatorA.setPower(power+0.02 * diff);
             }
-        } else if (combinedPos > target){
+        } else if (positionA > target){
             if (positionA - positionB < 50) {
                 ElevatorA.setPower(-power);
                 ElevatorB.setPower(-power);
-            } else if (positionA > positionB || !(Math.abs(positionA - positionB) < 50)) {
+            } else if (positionA > positionB || (diff > 50)) {
                 ElevatorA.setPower(-power);
                 ElevatorB.setPower(-power + 0.02);
-            } else if (positionB > positionA || !(Math.abs(positionA - positionB) < 50)) {
+            } else if (positionB > positionA || (diff > 50)) {
                 ElevatorB.setPower(-power);
                 ElevatorA.setPower(-power + 0.02);
             }
         }
-        return true;
+        return false;
     }
     public boolean horTo(double speed,double target,int tolerance,double power) {
         double positionA = (ElevatorA.getCurrentPosition()/EScalarA)*TickToIn;
