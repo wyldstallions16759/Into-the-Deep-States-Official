@@ -84,7 +84,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 "topclawwrist", "topclaw");
 
         bottomRoll = new ServoPivotSubsystem(hardwareMap, "lrollbottom", "rrollbottom", ServoPivotSubsystem.PartType.HORIZONTAL_EXTENSION_JOINT);
-        armBase = new ServoPivotSubsystem(hardwareMap, "larmbase","rarmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
+        armBase = new ServoPivotSubsystem(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
         armWrist = new ServoPivotSubsystem(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
         // Two more subsystems required - The vertical elevator arm subsystem,
@@ -110,6 +110,8 @@ public class OfficialTeleop28147 extends LinearOpMode {
         boolean horizontalEndEffectorClawTogglePreviousState = false;
         boolean verticalEndEffectorClawTogglePreviousState = false;
 
+        double horizontalArmPosition = 0.5;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -129,7 +131,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
             //horiz endeffector
             double horizontalArmRotate = -gamepad2.right_stick_y; // make this one STICKY!
-            double horizontalArmPosition = 0.5;
+
 
             double horizontalEndEffectorWrist = gamepad2.right_stick_x;
             boolean horizontalEndEffectorClawToggle = gamepad2.right_trigger > TRIGGER_TOLERANCE;
@@ -139,8 +141,8 @@ public class OfficialTeleop28147 extends LinearOpMode {
             boolean verticalExtensionDown = gamepad2.a; // go to down
 
             // vertical arm servos (work together, two presets in one)
-            boolean verticalArmRotateUp = gamepad2.dpad_left;
-            boolean verticalArmRotateDown = gamepad2.dpad_right;
+            boolean verticalArmRotateUp = gamepad2.x;
+            boolean verticalArmRotateDown = gamepad2.b;
 
             // override wristarm
             double manualArmWristPos = -gamepad2.left_stick_y;
@@ -250,15 +252,13 @@ public class OfficialTeleop28147 extends LinearOpMode {
             //verticalSlides.slideTo(verticalExtensionPosition);
 
             horizontalWrist.wrist(horizontalEndEffectorWrist);
-            verticalWrist.wrist(verticalEndEffectorWrist);
 
             // arm and roll
-            if (horizontalArmRotate > TRIGGER_TOLERANCE) {
-                horizontalArmPosition += ROLL_SPEED;
+            if (Math.abs(horizontalArmRotate) > TRIGGER_TOLERANCE) {
+                telemetry.addLine("Trigger toggled!!!");
+                horizontalArmPosition += horizontalArmRotate*ROLL_SPEED;
             }
-            else if (horizontalArmRotate < -TRIGGER_TOLERANCE){
-                horizontalArmPosition -= ROLL_SPEED;
-            }
+            telemetry.addData("horizarmpos",horizontalArmPosition);
             horizontalArmPosition = Math.min(1,Math.max(horizontalArmPosition, 0)); // limit it to 0-1
 
             bottomRoll.armToCustom(horizontalArmPosition);
@@ -267,10 +267,12 @@ public class OfficialTeleop28147 extends LinearOpMode {
             if (verticalArmRotateUp){
                 armBase.armToRaised();
                 armWrist.armToRaised();
+                verticalWrist.wrist(1);
             }
             else if (verticalArmRotateDown){
                 armBase.armToRest();
                 armWrist.armToRest();
+                verticalWrist.wrist(-1);
             }
 
             if (manualOverrideArmWrist){
