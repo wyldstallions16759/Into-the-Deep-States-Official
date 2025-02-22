@@ -80,13 +80,12 @@ public class XT1 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        arm = new ArmSubsystem(hardwareMap,telemetry);
 //        IntakeA = hardwareMap.get(Servo.class,"IntakeA");
 //        IntakeB = hardwareMap.get(Servo.class,"IntakeB");
-//        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
-//        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
-//        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
-//        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
+        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
+        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
+        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
+        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
 //        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
 //        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
 //        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
@@ -101,17 +100,17 @@ public class XT1 extends LinearOpMode {
 //        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        IntakeA.setDirection(Servo.Direction.REVERSE);
-//        PendulumA.setDirection(Servo.Direction.REVERSE);
-//        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
+        PendulumA.setDirection(Servo.Direction.REVERSE);
+        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
                 "ElevatorA", "ElevatorB",
                 4000, 4000,
-                DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
-                5);
+                DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
+                20);
         SlidePairSubsystem Extension = new SlidePairSubsystem(hardwareMap,
-                "ElevatorA", "ElevatorB",
+                "SlideA", "SlideB",
                 4000, 4000,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
                 5);
@@ -154,7 +153,7 @@ public class XT1 extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-
+        double position = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -183,10 +182,11 @@ public class XT1 extends LinearOpMode {
             boolean SUB = gamepad2.dpad_left;
             boolean OZ = gamepad2.dpad_right;
             double dumb = 13.9;
+
+            int toSubCounter = 1;
 //            double ElevAPos = ElevatorA.getCurrentPosition();
 //            double ElevBPos = ElevatorB.getCurrentPosition();
 //            double combinedPos = ElevAPos + ElevBPos;
-            boolean firstTime = false;
 //            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
 
 
@@ -216,14 +216,14 @@ public class XT1 extends LinearOpMode {
                 leftBackPower /= max;
                 rightBackPower /= max;
             }
-//            if (sampleReady) {
-//                PendulumA.setPosition(180/300);
-//                PendulumB.setPosition(180/300);
-//                Wrist.setPosition(0);
-//            } else {
-//                PendulumA.setPosition(90/300);
-//                PendulumB.setPosition(90/300);
-//            }
+            if (sampleReady) {
+                PendulumA.setPosition(1);
+                PendulumB.setPosition(1);
+                Wrist.setPosition(0);
+            } else {
+                PendulumA.setPosition(0);
+                PendulumB.setPosition(0);
+            }
 //            if (wallReady) {
 //                PendulumA.setPosition(90/300);
 //                PendulumB.setPosition(90/300);
@@ -247,13 +247,27 @@ public class XT1 extends LinearOpMode {
 //                PendulumB.setPosition(90/300);
 //                Wrist.setPosition(0);
 //            }
-//            if (toGround) {
-//                IntakeElevationA.setPosition(45/300);
-//                IntakeElevationB.setPosition(45/300);
-//            } else {
+            if (toGround) {
+//                IntakeElevationA.setPosition(0.167);
+                IntakeElevationB.setPosition(0.167);
+            } else {
 //                IntakeElevationA.setPosition(0);
-//                IntakeElevationB.setPosition(0);
-//            }
+                IntakeElevationB.setPosition(0);
+            }
+
+            if (toSub) {
+                toSubCounter += 1;
+            }
+            if (toSubCounter % 2 == 0) {
+                position = 0.2;
+            }
+            double input = -gamepad1.left_stick_y;
+            boolean firstTime = false;
+
+
+            position = Math.min(Math.max(position, 0), 1);
+            Elevation.slideTo(position);
+
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
@@ -271,9 +285,9 @@ public class XT1 extends LinearOpMode {
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             */
-            if (toSub) {
-                Elevation.slideTo(0.3);
-            }
+//            if (toSub) {
+//                Elevation.slideTo(0.3);
+//            }
 
             // Send calculated power to wheels
 //            leftFrontDrive.setPower(leftFrontPower);
@@ -304,12 +318,12 @@ public class XT1 extends LinearOpMode {
 //                ElevatorA.setPower(0.5);
 //                ElevatorB.setPower(0.5);
 //            }
-            if (toSub && !firstTime) {
-
-                firstTime = Elevation.slideTo(0.3);
-            } else {
-                firstTime = true;
-            }
+//            if (toSub && !firstTime) {
+//
+//                firstTime = Elevation.slideTo(0.3);
+//            } else {
+//                firstTime = true;
+//            }
 
             // Wrist Subsystem calls:
 //            if (SUB) {
