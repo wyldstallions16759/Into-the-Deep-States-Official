@@ -20,12 +20,22 @@ public class SlidePairSubsystem {
 
         this.targetFraction = 0;
     }
-
+    public void setPower(double Power) {
+        this.slideA.setPower(Power);
+        this.slideB.setPower(Power);
+    }
     public boolean slideTo(double target){
         this.targetFraction = target;
         return this.slideTo();
     }
+    public double getAPosition() {
+        return slideA.get1Position();
 
+    }
+    public double getBPosition() {
+        return slideB.get1Position();
+
+    }
     public boolean slideTo(){
         return this.slideA.runToFraction(this.targetFraction)
                 && this.slideB.runToFraction(this.targetFraction);

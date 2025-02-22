@@ -47,7 +47,12 @@ public class SingleSlideSystem {
         this.targetPosition = ticks;
         return this.run();
     }
-
+    public void setPower(double power) {
+        slideMotor.setPower(power);
+    }
+    public double get1Position() {
+        return slideMotor.getCurrentPosition();
+    }
     public boolean run(){
         double speed = 1;
 
