@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 
 @TeleOp(name="Official Teleop 28147", group = "AAOpmodes")//make it appear at top
