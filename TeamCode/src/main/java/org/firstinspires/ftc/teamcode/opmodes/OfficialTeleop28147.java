@@ -12,9 +12,11 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 @TeleOp(name="Official Teleop 28147", group = "AAOpmodes")//make it appear at top
 public class OfficialTeleop28147 extends LinearOpMode {
     final double TRIGGER_TOLERANCE = 0.4;
+    final double STICK_TOLERANCE = 0.25;
     final double HORIZONTAL_SLIDE_SPEED = 1; // Tune this to Operator's liking.
     final double VERTICAL_EXTENSION_SPEED = 1; // Tune this to Operator's liking.
     final double ROLL_SPEED = 0.01;
+    final double CLIP_SPECIMEN = .15;
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -111,6 +113,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
         boolean verticalEndEffectorClawTogglePreviousState = false;
 
         double horizontalArmPosition = 0.5;
+        double horizontalWristPosition = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -141,8 +144,8 @@ public class OfficialTeleop28147 extends LinearOpMode {
             boolean verticalExtensionDown = gamepad2.a; // go to down
 
             // vertical arm servos (work together, two presets in one)
-            boolean verticalArmRotateUp = gamepad2.x;
-            boolean verticalArmRotateDown = gamepad2.b;
+            boolean verticalArmRotateUp = gamepad2.b;
+            boolean verticalArmRotateDown = gamepad2.x;
 
             // override wristarm
             double manualArmWristPos = -gamepad2.left_stick_y;
@@ -188,15 +191,15 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
             // Horizontal Slides
             if (horizontalExtensionIn){
-                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 rhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
                 lhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
             }
             else if (horizontalExtensionOut){
-                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 rhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
                 lhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
@@ -210,15 +213,15 @@ public class OfficialTeleop28147 extends LinearOpMode {
             }
 
             if (verticalExtensionDown){
-                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 rvSlide.setPower(-VERTICAL_EXTENSION_SPEED);
                 lvSlide.setPower(-VERTICAL_EXTENSION_SPEED);
             }
             else if (verticalExtensionUp){
-                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                rvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                lvSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 rvSlide.setPower(VERTICAL_EXTENSION_SPEED);
                 lvSlide.setPower(VERTICAL_EXTENSION_SPEED);
@@ -251,10 +254,17 @@ public class OfficialTeleop28147 extends LinearOpMode {
            // horizontalSlides.slideTo(horizontalExtensionPosition);
             //verticalSlides.slideTo(verticalExtensionPosition);
 
-            horizontalWrist.wrist(horizontalEndEffectorWrist);
+            if (Math.abs(horizontalEndEffectorWrist) > STICK_TOLERANCE) {
+                horizontalWristPosition += horizontalEndEffectorWrist*ROLL_SPEED;
+            }
+            telemetry.addData("horizwristpos",horizontalWristPosition);
+            horizontalWristPosition = Math.min(1,Math.max(horizontalWristPosition, -1)); // limit it to 0-1
+
+
+            horizontalWrist.wrist(horizontalWristPosition);
 
             // arm and roll
-            if (Math.abs(horizontalArmRotate) > TRIGGER_TOLERANCE) {
+            if (Math.abs(horizontalArmRotate) > STICK_TOLERANCE) {
                 telemetry.addLine("Trigger toggled!!!");
                 horizontalArmPosition += horizontalArmRotate*ROLL_SPEED;
             }
@@ -267,12 +277,12 @@ public class OfficialTeleop28147 extends LinearOpMode {
             if (verticalArmRotateUp){
                 armBase.armToRaised();
                 armWrist.armToRaised();
-                verticalWrist.wrist(1);
+                verticalWrist.wrist(-1);
             }
             else if (verticalArmRotateDown){
                 armBase.armToRest();
                 armWrist.armToRest();
-                verticalWrist.wrist(-1);
+                verticalWrist.wrist(1);
             }
 
             if (manualOverrideArmWrist){

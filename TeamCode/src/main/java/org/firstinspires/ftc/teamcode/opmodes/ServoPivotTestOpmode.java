@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
 public class ServoPivotTestOpmode extends LinearOpMode {
     @Override
     public void runOpMode(){
-        ServoPivotSubsystem system = new ServoPivotSubsystem(hardwareMap, "lrollbottom", "rrollbottom", ServoPivotSubsystem.PartType.HORIZONTAL_EXTENSION_JOINT);
+        ServoPivotSubsystem system = new ServoPivotSubsystem(hardwareMap, "rarmbase", "larmbase", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
 
         waitForStart();
 
