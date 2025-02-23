@@ -64,16 +64,16 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
-        public double lateralInPerTick = -0.7709453524590154; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
-        public double trackWidthTicks = -15.603106289826504;
+        public double lateralInPerTick = 0.6242713690754562; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
+        public double trackWidthTicks = -14.85361460183841; // angular ramp logger was failing - i measured track width, and because 1 tick = 1 inch, this should be correct.
 
         // feedforward parameters (in tick units)
-        public double kS = 0.8124855000094318;
-        public double kV = 0.18794493568568962;
-        public double kA = 0.00005;
+        public double kS = 1.4181372145256086;
+        public double kV = 0.1817753692288631;
+        public double kA = .00005;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
+        public double maxWheelVel = 30;
         public double minProfileAccel = -30;
         public double maxProfileAccel = 50;
 
@@ -234,7 +234,7 @@ public class MecanumDrive {
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyImu(hardwareMap, "pinpoint", new RevHubOrientationOnRobot(
+        lazyImu = new LazyImu(hardwareMap, "odo", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();

@@ -38,7 +38,6 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf");
@@ -311,17 +310,18 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 // first, program the transfermode presets
                 if (transferState != previousTransferState){ // if state just changed
                     if (transferState == 1){ // state one - lower arm moves up, top arm moves down but not all the way.
-                        armBase.armToCustom(0.6);
+                        armBase.armToCustom(0.61);
                         horizontalWrist.wrist(1);
-                        verticalWrist.wrist(.95);
-                        armWrist.armToCustom(1);
+                        verticalWrist.wrist(-.95);
+                        armWrist.armToCustom(.75);
                         verticalWrist.claw(WristSubsystem28147.ClawState.OPEN);
                         bottomRoll.armToRest();
                         horizontalArmPosition = 0;
                         horizontalWristPosition = 1;
                     }
                     else if (transferState == 2){
-                        armBase.armToCustom(.5);
+                        armBase.armToCustom(.55);
+                        armWrist.armToCustom(.85 );
                     }
                     else if (transferState == 3){
                         verticalWrist.claw(WristSubsystem28147.ClawState.CLOSED);
