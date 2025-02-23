@@ -100,13 +100,11 @@ public class OfficialTeleop28147 extends LinearOpMode {
         runtime.reset();
 
         // Counting variables/toggles:
-        boolean manualOverride = false; // RATHER THAN USING PRESETS USE MANUAL OVERRIDE
-        // VERY DANGEROUS IF ACCIDENTALLY TOGGLED. CONTROLLER WILL RUMBLE WHEN ENABLED/DISABLED.
-        // DISABLED BY DEFAULT. IF SOMETHING BREAKS, OPERATOR CAN SWITCH INTO MANUAL OVERRIDE MODE.
-        // IF WE ARE USING THE LOGITECH CONTROLLERS, RUMBLE WILL NOT WORK. IT WILL DISPLAY ON TELEMETRY
-        // ON THE FIRST LINE. COACH WILL KNOW HOW TO SEE IT OR SOMETHING. PROBABLY WON'T DO ANYTHING
+        int transferState = 0; // 0 = off, 1 = step 1, etc.
+        int previousTransferState = 0;
+        boolean transfer_rotateArmTogglePreviousState = false;
 
-        boolean manualOverrideTogglePreviousState = false;
+        boolean transferTogglePreviousState = false;
 
         boolean horizontalEndEffectorClawTogglePreviousState = false;
         boolean verticalEndEffectorClawTogglePreviousState = false;
@@ -124,8 +122,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
             boolean slowDown = gamepad1.right_bumper;
 
-            // Operator Controls
-            boolean manualOverrideToggle = gamepad2.back; // figure out what button this is. probably wont do anything.
+            ///  Standard Mode Operator Controls
 
             //horizontal extension (manual0
             boolean horizontalExtensionOut = gamepad2.dpad_up;
@@ -153,6 +150,13 @@ public class OfficialTeleop28147 extends LinearOpMode {
             // vertical wristclaw
             double verticalEndEffectorWrist = gamepad2.left_stick_x;
             boolean verticalEndEffectorClawToggle = gamepad2.left_trigger > TRIGGER_TOLERANCE;
+
+            /// Transfer Mode Operator Controls
+
+            boolean transferToggle = gamepad2.back; // figure out what button this is.
+            boolean cancelTransfer = gamepad2.start; // cancel the transfer when this is pressed. No need for a toggle, as it only cancels the transfer.
+
+            boolean transfer_rotateArmToggle = gamepad2.b;
 
             telemetry.addData("vertical in button", gamepad2.left_trigger);
 
@@ -187,6 +191,21 @@ public class OfficialTeleop28147 extends LinearOpMode {
             // END Drive Power
 
             // Start Operator Controls
+
+
+            /// ENABLE TRANSFER MODE:
+            if (transferToggle && !transferTogglePreviousState){
+                transferState++;
+                gamepad2.rumble(1000);
+            }
+            transferTogglePreviousState = transferToggle;
+
+            if (cancelTransfer){
+                transferState = 0; // simply cancel the transfer. robot will continue to function as normal.
+            }
+
+            // what CAN you control during transfer mode? horizontal slides (normal), vertical slides (normal), bottom wrist - two buttons
+            // you annot control the arm attached to vertical slides.
 
             // Horizontal Slides
             if (horizontalExtensionIn){
@@ -233,72 +252,110 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 lvSlide.setPower(0);
             }
 
+            if (transferState == 0) {
+                // horizontal/vertical end effector - wrist/claw:
+                /// WRIST WILL BE DONE ONLY IN THE "MOVE EVERYTHING" SECTION
+                if (horizontalEndEffectorClawToggle && !horizontalEndEffectorClawTogglePreviousState) {
+                    horizontalWrist.claw();
+                }
 
-            // horizontal/vertical end effector - wrist/claw:
-            /// WRIST WILL BE DONE ONLY IN THE "MOVE EVERYTHING" SECTION
-            if (horizontalEndEffectorClawToggle && !horizontalEndEffectorClawTogglePreviousState){
-                horizontalWrist.claw();
+                horizontalEndEffectorClawTogglePreviousState = horizontalEndEffectorClawToggle;
+
+                if (verticalEndEffectorClawToggle && !verticalEndEffectorClawTogglePreviousState) {
+                    verticalWrist.claw();
+                }
+
+                verticalEndEffectorClawTogglePreviousState = verticalEndEffectorClawToggle;
+
+                // Move Everything:
+
+                // horizontalSlides.slideTo(horizontalExtensionPosition);
+                //verticalSlides.slideTo(verticalExtensionPosition);
+
+                if (Math.abs(horizontalEndEffectorWrist) > STICK_TOLERANCE) {
+                    horizontalWristPosition += horizontalEndEffectorWrist * ROLL_SPEED;
+                }
+                telemetry.addData("horizwristpos", horizontalWristPosition);
+                horizontalWristPosition = Math.min(1, Math.max(horizontalWristPosition, -1)); // limit it to 0-1
+
+
+                horizontalWrist.wrist(horizontalWristPosition);
+
+                // arm and roll
+                if (Math.abs(horizontalArmRotate) > STICK_TOLERANCE) {
+                    telemetry.addLine("Trigger toggled!!!");
+                    horizontalArmPosition += horizontalArmRotate * ROLL_SPEED;
+                }
+                telemetry.addData("horizarmpos", horizontalArmPosition);
+                horizontalArmPosition = Math.min(1, Math.max(horizontalArmPosition, 0)); // limit it to 0-1
+
+                bottomRoll.armToCustom(horizontalArmPosition);
+
+                // arm on the vertical extension slides.
+                if (verticalArmRotateUp) {
+                    armBase.armToRaised();
+                    armWrist.armToRaised();
+                    verticalWrist.wrist(-1);
+                } else if (verticalArmRotateDown) {
+                    armBase.armToRest();
+                    armWrist.armToRest();
+                    verticalWrist.wrist(1);
+                }
+
+                if (manualOverrideArmWrist) {
+                    armWrist.armToCustom((manualArmWristPos + 1) / 2);
+                }
+            }
+            else{ // if transferstate != 0
+                // we can still move both sets of slides. We must be able to move bottom wrist in a toggly fashion.
+                // first, program the transfermode presets
+                if (transferState != previousTransferState){ // if state just changed
+                    if (transferState == 1){ // state one - lower arm moves up, top arm moves down but not all the way.
+                        armBase.armToCustom(0.6);
+                        horizontalWrist.wrist(1);
+                        verticalWrist.wrist(.95);
+                        armWrist.armToCustom(1);
+                        verticalWrist.claw(WristSubsystem28147.ClawState.OPEN);
+                        bottomRoll.armToRest();
+                        horizontalArmPosition = 0;
+                        horizontalWristPosition = 1;
+                    }
+                    else if (transferState == 2){
+                        armBase.armToCustom(.5);
+                    }
+                    else if (transferState == 3){
+                        verticalWrist.claw(WristSubsystem28147.ClawState.CLOSED);
+                    }
+                    else if (transferState == 4){
+                        horizontalWrist.claw(WristSubsystem28147.ClawState.OPEN);
+                    }
+                    else if (transferState == 5){
+                        transferState = 0;
+                    }
+                }
+                previousTransferState = transferState;
+
+                if (transferState == 1){
+                    if (transfer_rotateArmToggle && !transfer_rotateArmTogglePreviousState){
+                        if (horizontalWristPosition == -1){
+                            horizontalWristPosition = 1;
+                        }
+                        else{
+                            horizontalWristPosition = -1;
+                        }
+
+                        horizontalWrist.wrist(horizontalWristPosition);
+                    }
+                    transfer_rotateArmTogglePreviousState = transfer_rotateArmToggle;
+                }
             }
 
-            horizontalEndEffectorClawTogglePreviousState = horizontalEndEffectorClawToggle;
-
-            if (verticalEndEffectorClawToggle && !verticalEndEffectorClawTogglePreviousState){
-                verticalWrist.claw();
-            }
-
-            verticalEndEffectorClawTogglePreviousState = verticalEndEffectorClawToggle;
-
-            // Move Everything:
-
-           // horizontalSlides.slideTo(horizontalExtensionPosition);
-            //verticalSlides.slideTo(verticalExtensionPosition);
-
-            if (Math.abs(horizontalEndEffectorWrist) > STICK_TOLERANCE) {
-                horizontalWristPosition += horizontalEndEffectorWrist*ROLL_SPEED;
-            }
-            telemetry.addData("horizwristpos",horizontalWristPosition);
-            horizontalWristPosition = Math.min(1,Math.max(horizontalWristPosition, -1)); // limit it to 0-1
-
-
-            horizontalWrist.wrist(horizontalWristPosition);
-
-            // arm and roll
-            if (Math.abs(horizontalArmRotate) > STICK_TOLERANCE) {
-                telemetry.addLine("Trigger toggled!!!");
-                horizontalArmPosition += horizontalArmRotate*ROLL_SPEED;
-            }
-            telemetry.addData("horizarmpos",horizontalArmPosition);
-            horizontalArmPosition = Math.min(1,Math.max(horizontalArmPosition, 0)); // limit it to 0-1
-
-            bottomRoll.armToCustom(horizontalArmPosition);
-
-            // arm on the vertical extension slides.
-            if (verticalArmRotateUp){
-                armBase.armToRaised();
-                armWrist.armToRaised();
-                verticalWrist.wrist(-1);
-            }
-            else if (verticalArmRotateDown){
-                armBase.armToRest();
-                armWrist.armToRest();
-                verticalWrist.wrist(1);
-            }
-
-            if (manualOverrideArmWrist){
-                armWrist.armToCustom((manualArmWristPos+1)/2);
-            }
 
 
 
-            /// ENABLE MANUAL OVERRIDE MODE:
-            if (manualOverrideToggle && !manualOverrideTogglePreviousState){
-                manualOverride = !manualOverride;
-                gamepad2.rumble(1000);
-            }
-            manualOverrideTogglePreviousState = manualOverrideToggle;
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Manual Override Enabled",manualOverride);
+            telemetry.addData("Transfer Mode Enabled",transferState);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
