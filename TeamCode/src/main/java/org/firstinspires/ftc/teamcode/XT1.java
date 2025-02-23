@@ -80,16 +80,16 @@ public class XT1 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-//        IntakeA = hardwareMap.get(Servo.class,"IntakeA");
-//        IntakeB = hardwareMap.get(Servo.class,"IntakeB");
-        PendulumA = hardwareMap.get(Servo.class,"PendulumA");
-        PendulumB = hardwareMap.get(Servo.class,"PendulumB");
-        IntakeElevationA = hardwareMap.get(Servo.class,"IntakeElevationA");
-        IntakeElevationB = hardwareMap.get(Servo.class,"IntakeElevationB");
-        Claw = hardwareMap.get(Servo.class,"Claw");
-        Wrist = hardwareMap.get(Servo.class,"Wrist");
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
+        IntakeA = hardwareMap.get(Servo.class, "IntakeA");
+        IntakeB = hardwareMap.get(Servo.class, "IntakeB");
+        PendulumA = hardwareMap.get(Servo.class, "PendulumA");
+        PendulumB = hardwareMap.get(Servo.class, "PendulumB");
+        IntakeElevationA = hardwareMap.get(Servo.class, "IntakeElevationA");
+        IntakeElevationB = hardwareMap.get(Servo.class, "IntakeElevationB");
+        Claw = hardwareMap.get(Servo.class, "Claw");
+        Wrist = hardwareMap.get(Servo.class, "Wrist");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -100,14 +100,14 @@ public class XT1 extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        IntakeA.setDirection(Servo.Direction.REVERSE);
+        IntakeA.setDirection(Servo.Direction.REVERSE);
         PendulumA.setDirection(Servo.Direction.REVERSE);
         IntakeElevationB.setDirection(Servo.Direction.REVERSE);
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
                 "ElevatorA", "ElevatorB",
-                4000, 4000,
+                3284, 3339,
                 DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
                 20);
         SlidePairSubsystem Extension = new SlidePairSubsystem(hardwareMap,
@@ -155,7 +155,7 @@ public class XT1 extends LinearOpMode {
         waitForStart();
         runtime.reset();
         double position = 0;
-        Wrist.scaleRange(0,1);
+        Wrist.scaleRange(0, 1);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -169,7 +169,7 @@ public class XT1 extends LinearOpMode {
             float claw_in = gamepad2.right_trigger;
             float claw_out = gamepad2.left_trigger;
             boolean claw_toggle = gamepad2.dpad_up;
-            boolean toSub = gamepad2.b;
+            boolean toSub = gamepad2.y;
             boolean toGround = gamepad2.a;
             boolean release_slightly_claw = gamepad2.left_bumper;
             boolean slow_the_flip_down = gamepad1.right_bumper;
@@ -184,8 +184,9 @@ public class XT1 extends LinearOpMode {
             boolean SUB = gamepad2.dpad_left;
             boolean OZ = gamepad2.dpad_right;
             double dumb = 13.9;
+            int wallReadyCounter = 1;
             int clawToggleCounter = 1;
-
+            int sampleReadyCounter = 1;
             int toSubCounter = 1;
             double ElevAPos = Elevation.getAPosition();
             double ElevBPos = Elevation.getBPosition();
@@ -206,80 +207,104 @@ public class XT1 extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
             if (toGround) {
-                IntakeElevationA.setPosition(0.2);
-                IntakeElevationB.setPosition(0.2);
+                IntakeElevationA.setPosition(0.4);
+                IntakeElevationB.setPosition(0.4);
+            } else {
+                IntakeElevationA.setPosition(0);
+                IntakeElevationB.setPosition(0);
             }
             if (slow_the_flip_down) {
                 max *= 5;
             }
-            if (combinedPos>800) {
-                max *= combinedPos/800;
+            if (combinedPos > 800) {
+                max *= combinedPos / 800;
             }
             if (up > 0.05) {
                 Elevation.setPower(-1);
             } else if (up < -0.05) {
                 Elevation.setPower(1);
             } else {
-                Elevation.slideTo(position);
+                Elevation.setPower(0);
             }
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
-            }
-            if (sampleReady) {
-                PendulumA.setPosition(1);
-                PendulumB.setPosition(1);
-                Wrist.setPosition(0.6);
-//                position = 0.2;
-            }
-            else if (wallReady) {
-                PendulumA.setPosition(0.33);
-                PendulumB.setPosition(0.33);
-                sleep(300);
-                Wrist.setPosition(0);
-                sleep(300);
-                PendulumA.setPosition(0);
-                PendulumB.setPosition(0);
-            } else if (specimenReady) {
-                PendulumA.setPosition(0.6);
-                PendulumB.setPosition(0.6);
-                sleep(300);
-                Wrist.setPosition(0);
-            }
-            else {
-                PendulumA.setPosition(0);
-                PendulumB.setPosition(0);
-            }
-            if (claw_toggle) {
-                clawToggleCounter += 1;
-            }
-            if (clawToggleCounter%2 == 0) {
-                Claw.setPosition(0.3);
-            }
-            if (toSub) {
-                toSubCounter += 1;
-            }
-            if (toSubCounter % 2 == 0) {
-                position = 0.2;
-            }
-            double input = -gamepad1.left_stick_y;
-            boolean firstTime = false;
+            if (out > 0.05) {
+                Extension.setPower(-1);
+            } else if (out < -0.05) {
+                Extension.setPower(1);
+            } else {
+
+                if (max > 1.0) {
+                    leftFrontPower /= max;
+                    rightFrontPower /= max;
+                    leftBackPower /= max;
+                    rightBackPower /= max;
+                }
+
+                if (wallReady) {
+                    wallReadyCounter += 1;
+                }
+                if (sampleReady) {
+                    sampleReadyCounter += 1;
+                }
+
+                if (sampleReady) {
+                    PendulumA.setPosition(0.7);
+                    PendulumB.setPosition(0.7);
+                    Wrist.setPosition(0);
+                    sleep(2000);
+                    if ( 0.2 > ElevAPos) {
+                        Elevation.slideTo(0.3);
+                    } else if (0.2 < ElevAPos) {
+                        Elevation.setPower(0);
+                    }
+                    sleep(10000);
+                } else if (wallReadyCounter%2 == 0) {
+                    PendulumA.setPosition(0.5);
+                    PendulumB.setPosition(0.5);
+                    sleep(600);
+                    Wrist.setPosition(0.657);
+                    sleep(300);
+                    PendulumA.setPosition(0);
+                    PendulumB.setPosition(0);
+                    sleep(100000);
+                } else if (specimenReady) {
+//                    PendulumA.setPosition(0);
+//                    PendulumB.setPosition(0);
+                    sleep(300);
+                    Wrist.setPosition(0.657);
+                } else {
+                    PendulumA.setPosition(0);
+                    PendulumB.setPosition(0);
+                    Wrist.setPosition(0);
+                    Elevation.setPower(0);
+                }
+                if (claw_toggle) {
+                    clawToggleCounter += 1;
+                }
+                if (clawToggleCounter % 2 == 0) {
+                    Claw.setPosition(0.3);
+                }
+                if (toSub) {
+                    toSubCounter += 1;
+                }
+                if (toSubCounter % 2 == 0) {
+                    position = 0.2;
+                }
+                double input = -gamepad1.left_stick_y;
+                boolean firstTime = false;
 
 
-            position = Math.min(Math.max(position, 0), 1);
+                position = Math.min(Math.max(position, 0), 1);
 
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
+                // This is test code:
+                //
+                // Uncomment the following code to test your motor directions.
+                // Each button should make the corresponding motor run FORWARD.
+                //   1) First get all the motors to take to correct positions on the robot
+                //      by adjusting your Robot Configuration if necessary.
+                //   2) Then make sure they run in the correct direction by modifying the
+                //      the setDirection() calls above.
+                // Once the correct motors move in the correct direction re-comment this code.
 
 
             /*
@@ -292,26 +317,26 @@ public class XT1 extends LinearOpMode {
 //                Elevation.slideTo(0.3);
 //            }
 
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+                // Send calculated power to wheels
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
 
-//            if (intakeIn > 0.05) {
-//                IntakeA.setPosition(1);
-//                IntakeB.setPosition(1);
-//            } else {
-//                IntakeA.setPower(0.5);
-//                IntakeB.setPower(0.5);
-//            }
-//            if (intakeOut > 0.05) {
-//                IntakeA.setPosition(0);
-//                IntakeB.setPosition(0);
-//            } else {
-//                IntakeA.setPower(0.5);
-//                IntakeB.setPower(0.5);
-//            }
+                if (intakeIn > 0.05) {
+                    IntakeA.setPosition(1);
+                    IntakeB.setPosition(1);
+                } else {
+                    IntakeA.setPosition(0.5);
+                    IntakeB.setPosition(0.5);
+                }
+                if (intakeOut > 0.05) {
+                    IntakeA.setPosition(0);
+                    IntakeB.setPosition(0);
+                } else {
+                    IntakeA.setPosition(0.5);
+                    IntakeB.setPosition(0.5);
+                }
 //            if (toSub && !firstTime) {
 //
 //                firstTime = Elevation.slideTo(0.3);
@@ -319,7 +344,7 @@ public class XT1 extends LinearOpMode {
 //                firstTime = true;
 //            }
 
-            // Wrist Subsystem calls:
+                // Wrist Subsystem calls:
 //            if (SUB) {
 //                SUBMERSIBLE = new Pose2D(DistanceUnit.INCH,-29 ,dumb += 2,AngleUnit.DEGREES,0);
 //                pinpoint.driveTo(SUBMERSIBLE,0.3,0);
@@ -338,16 +363,16 @@ public class XT1 extends LinearOpMode {
 //                rightBackDrive.setPower(0);
 //            }
 
-            // Show the elapsed game time and wheel power.
+                // Show the elapsed game time and wheel power.
 //            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
 //            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
 //            telemetry.addData("CombinedPos",combinedPos);
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.update();
-        }
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+                telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+                telemetry.update();
+            }
 //l
-    }
+        }
 
-}
+    }}
