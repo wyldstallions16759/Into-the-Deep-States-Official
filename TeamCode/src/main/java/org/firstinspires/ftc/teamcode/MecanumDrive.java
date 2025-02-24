@@ -473,7 +473,7 @@ public class MecanumDrive {
         c.strokePolyline(xPoints, yPoints);
     }
 
-    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, PoseMap poseMap) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
                 FollowTrajectoryAction::new,
@@ -485,7 +485,13 @@ public class MecanumDrive {
                 ),
                 beginPose, 0.0,
                 defaultTurnConstraints,
-                defaultVelConstraint, defaultAccelConstraint
+                defaultVelConstraint, defaultAccelConstraint,
+                poseMap
         );
+    }
+
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose){
+        return this.actionBuilder(beginPose, pose -> new Pose2dDual<>(
+                pose.position.x, pose.position.y, pose.heading));
     }
 }
