@@ -164,7 +164,7 @@ public class XT1 extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_y;
+            double yaw = gamepad1.right_stick_x;
             float up = gamepad2.left_stick_y;
             float out = gamepad2.right_stick_y;
             boolean claw_toggle = gamepad2.dpad_up;
@@ -187,6 +187,7 @@ public class XT1 extends LinearOpMode {
             int clawToggleCounter = 1;
             int sampleReadyCounter = 1;
             int toSubCounter = 1;
+            double target = 0;
             double ElevAPos = Elevation.getAPosition();
             double ElevBPos = Elevation.getBPosition();
             double combinedPos = ElevAPos + ElevBPos;
@@ -206,8 +207,8 @@ public class XT1 extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
             if (toGround) {
-                IntakeElevationA.setPosition(0.3);
-                IntakeElevationB.setPosition(0.3);
+                IntakeElevationA.setPosition(0.5);
+                IntakeElevationB.setPosition(0.5);
             } else {
                 IntakeElevationA.setPosition(0);
                 IntakeElevationB.setPosition(0);
@@ -249,7 +250,7 @@ public class XT1 extends LinearOpMode {
                 if (claw_toggle) {
                     clawToggleCounter += 1;
                 }
-                if (sampleReady) {
+                if (sampleReadyCounter%2 == 0) {
                     PendulumA.setPosition(0.05);
                     PendulumB.setPosition(0.05);
                     Wrist.setPosition(0);
@@ -259,6 +260,7 @@ public class XT1 extends LinearOpMode {
                     sleep(500);
                     Claw.setPosition(0.2);
                     sleep(100);
+
                 } else if (wallReadyCounter%2 == 0) {
                     PendulumA.setPosition(0.5);
                     PendulumB.setPosition(0.5);
@@ -274,11 +276,13 @@ public class XT1 extends LinearOpMode {
                     sleep(300);
                     Wrist.setPosition(0);
                     Claw.setPosition(0.2);
+                    target = 0.2;
                 } else {
                     PendulumA.setPosition(0);
                     PendulumB.setPosition(0);
                     Wrist.setPosition(0);
                     Claw.setPosition(0.2);
+                    target = 0;
                 }
                 if (claw_toggle) {
                     clawToggleCounter += 1;
@@ -294,6 +298,7 @@ public class XT1 extends LinearOpMode {
                 }
 
 
+            Elevation.slideTo(target);
                 position = Math.min(Math.max(position, 0), 1);
 
 

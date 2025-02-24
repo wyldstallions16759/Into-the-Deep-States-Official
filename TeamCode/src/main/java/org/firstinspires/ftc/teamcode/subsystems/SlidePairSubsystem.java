@@ -36,6 +36,22 @@ public class SlidePairSubsystem {
         return slideB.get1Position();
 
     }
+    public boolean slideToNew(double target, double tolerance) {
+        if (getAPosition() > target/3200 && Math.abs(getAPosition() - target/3200) > tolerance) {
+            slideA.setPower(-1);
+            slideB.setPower(-1);
+            return false;
+        } else if (getAPosition() < target/3200 && Math.abs(getAPosition() - target/3200) > tolerance) {
+            slideA.setPower(1);
+            slideB.setPower(1);
+            return false;
+        } else {
+            slideA.setPower(0);
+            slideB.setPower(0);
+            return true;
+        }
+    }
+
     public boolean slideTo(){
         return this.slideA.runToFraction(this.targetFraction)
                 && this.slideB.runToFraction(this.targetFraction);
