@@ -103,6 +103,7 @@ public class XT1 extends LinearOpMode {
         IntakeA.setDirection(Servo.Direction.REVERSE);
         PendulumA.setDirection(Servo.Direction.REVERSE);
         IntakeElevationB.setDirection(Servo.Direction.REVERSE);
+        Claw.setDirection(Servo.Direction.REVERSE);
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
@@ -207,8 +208,8 @@ public class XT1 extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
             if (toGround) {
-                IntakeElevationA.setPosition(0.4);
-                IntakeElevationB.setPosition(0.4);
+                IntakeElevationA.setPosition(0.3);
+                IntakeElevationB.setPosition(0.3);
             } else {
                 IntakeElevationA.setPosition(0);
                 IntakeElevationB.setPosition(0);
@@ -219,19 +220,21 @@ public class XT1 extends LinearOpMode {
             if (combinedPos > 800) {
                 max *= combinedPos / 800;
             }
+
             if (up > 0.05) {
-                Elevation.setPower(-1);
+                Elevation.setPower(-up);
             } else if (up < -0.05) {
-                Elevation.setPower(1);
+                Elevation.setPower(-up);
             } else {
                 Elevation.setPower(0);
             }
             if (out > 0.05) {
-                Extension.setPower(-1);
+                Extension.setPower(-out);
             } else if (out < -0.05) {
-                Extension.setPower(1);
+                Extension.setPower(-out);
             } else {
-
+                Extension.setPower(0);
+            }
                 if (max > 1.0) {
                     leftFrontPower /= max;
                     rightFrontPower /= max;
@@ -245,18 +248,19 @@ public class XT1 extends LinearOpMode {
                 if (sampleReady) {
                     sampleReadyCounter += 1;
                 }
-
+                if (claw_toggle) {
+                    clawToggleCounter += 1;
+                }
                 if (sampleReady) {
-                    PendulumA.setPosition(0.7);
-                    PendulumB.setPosition(0.7);
+                    PendulumA.setPosition(0.05);
+                    PendulumB.setPosition(0.05);
                     Wrist.setPosition(0);
-                    sleep(2000);
-                    if ( 0.2 > ElevAPos) {
-                        Elevation.slideTo(0.3);
-                    } else if (0.2 < ElevAPos) {
-                        Elevation.setPower(0);
-                    }
-                    sleep(10000);
+                    Claw.setPosition(0);
+                    IntakeElevationA.setPosition(0.13);
+                    IntakeElevationB.setPosition(0.13);
+                    sleep(500);
+                    Claw.setPosition(0.2);
+                    sleep(100);
                 } else if (wallReadyCounter%2 == 0) {
                     PendulumA.setPosition(0.5);
                     PendulumB.setPosition(0.5);
@@ -267,21 +271,22 @@ public class XT1 extends LinearOpMode {
                     PendulumB.setPosition(0);
                     sleep(100000);
                 } else if (specimenReady) {
-//                    PendulumA.setPosition(0);
-//                    PendulumB.setPosition(0);
+                    PendulumA.setPosition(0.7);
+                    PendulumB.setPosition(0.7);
                     sleep(300);
-                    Wrist.setPosition(0.657);
+                    Wrist.setPosition(0);
+                    Claw.setPosition(0.2);
                 } else {
                     PendulumA.setPosition(0);
                     PendulumB.setPosition(0);
                     Wrist.setPosition(0);
-                    Elevation.setPower(0);
+                    Claw.setPosition(0.2);
                 }
                 if (claw_toggle) {
                     clawToggleCounter += 1;
                 }
-                if (clawToggleCounter % 2 == 0) {
-                    Claw.setPosition(0.3);
+                if (claw_toggle) {
+                    Claw.setPosition(0);
                 }
                 if (toSub) {
                     toSubCounter += 1;
@@ -375,4 +380,4 @@ public class XT1 extends LinearOpMode {
 //l
         }
 
-    }}
+    }
