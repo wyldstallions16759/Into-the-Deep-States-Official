@@ -165,17 +165,15 @@ public class XT1 extends LinearOpMode {
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_y;
-            float up = gamepad2.right_stick_y;
-            float out = gamepad2.left_stick_y;
-            float claw_in = gamepad2.right_trigger;
-            float claw_out = gamepad2.left_trigger;
+            float up = gamepad2.left_stick_y;
+            float out = gamepad2.right_stick_y;
             boolean claw_toggle = gamepad2.dpad_up;
             boolean toSub = gamepad2.y;
             boolean toGround = gamepad2.a;
             boolean release_slightly_claw = gamepad2.left_bumper;
             boolean slow_the_flip_down = gamepad1.right_bumper;
-            float intakeIn = gamepad2.right_trigger;
-            float intakeOut = gamepad2.left_trigger;
+            float intakeIn = gamepad2.left_trigger;
+            float intakeOut = gamepad2.right_trigger;
             boolean sampleReady = gamepad2.right_bumper;
             boolean wallReady = gamepad2.x;
             boolean specimenReady = gamepad2.left_bumper;
@@ -271,8 +269,8 @@ public class XT1 extends LinearOpMode {
                     PendulumB.setPosition(0);
                     sleep(100000);
                 } else if (specimenReady) {
-                    PendulumA.setPosition(0.7);
-                    PendulumB.setPosition(0.7);
+                    PendulumA.setPosition(0.9);
+                    PendulumB.setPosition(0.9);
                     sleep(300);
                     Wrist.setPosition(0);
                     Claw.setPosition(0.2);
@@ -294,8 +292,6 @@ public class XT1 extends LinearOpMode {
                 if (toSubCounter % 2 == 0) {
                     position = 0.2;
                 }
-                double input = -gamepad1.left_stick_y;
-                boolean firstTime = false;
 
 
                 position = Math.min(Math.max(position, 0), 1);
@@ -329,15 +325,15 @@ public class XT1 extends LinearOpMode {
                 rightBackDrive.setPower(rightBackPower);
 
                 if (intakeIn > 0.05) {
-                    IntakeA.setPosition(1);
-                    IntakeB.setPosition(1);
+                    IntakeA.setPosition(0.5+intakeIn/2);
+                    IntakeB.setPosition(0.5+intakeIn/2);
                 } else {
                     IntakeA.setPosition(0.5);
                     IntakeB.setPosition(0.5);
                 }
                 if (intakeOut > 0.05) {
-                    IntakeA.setPosition(0);
-                    IntakeB.setPosition(0);
+                    IntakeA.setPosition(0.5-intakeOut/2);
+                    IntakeB.setPosition(0.5-intakeOut/2);
                 } else {
                     IntakeA.setPosition(0.5);
                     IntakeB.setPosition(0.5);
