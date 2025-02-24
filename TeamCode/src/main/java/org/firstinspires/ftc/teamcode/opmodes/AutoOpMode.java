@@ -13,9 +13,9 @@ public class AutoOpMode extends LinearOpMode {
         //          b. arm wrist servo
         //          c. vertical claw
         //          d. roadrunner
-        //      2. Create path:
-        //          Steps:
-        //              Starting Pose:
+        //      2. Create path
         //      3. Run Actions Blocking
+
+
     }
 }
