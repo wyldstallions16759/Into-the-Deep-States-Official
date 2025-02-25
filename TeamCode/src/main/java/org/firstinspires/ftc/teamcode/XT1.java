@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.subsystems.ServoSubsystem16760;
 import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
 
 /*
@@ -80,14 +81,6 @@ public class XT1 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        IntakeA = hardwareMap.get(Servo.class, "IntakeA");
-        IntakeB = hardwareMap.get(Servo.class, "IntakeB");
-        PendulumA = hardwareMap.get(Servo.class, "PendulumA");
-        PendulumB = hardwareMap.get(Servo.class, "PendulumB");
-        IntakeElevationA = hardwareMap.get(Servo.class, "IntakeElevationA");
-        IntakeElevationB = hardwareMap.get(Servo.class, "IntakeElevationB");
-        Claw = hardwareMap.get(Servo.class, "Claw");
-        Wrist = hardwareMap.get(Servo.class, "Wrist");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
         leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
@@ -100,10 +93,7 @@ public class XT1 extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        IntakeA.setDirection(Servo.Direction.REVERSE);
-        PendulumA.setDirection(Servo.Direction.REVERSE);
-        IntakeElevationB.setDirection(Servo.Direction.REVERSE);
-        Claw.setDirection(Servo.Direction.REVERSE);
+
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
@@ -116,6 +106,7 @@ public class XT1 extends LinearOpMode {
                 4000, 4000,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
                 5);
+        ServoSubsystem16760 Servo = new ServoSubsystem16760(hardwareMap,telemetry);
         //rr
 //        arm = new ArmSubsystem(hardwareMap,telemetry);
 //        //LeftFinger = hardwareMap.get(Servo.class, "LeftFinger");
@@ -206,11 +197,9 @@ public class XT1 extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
             if (toGround) {
-                IntakeElevationA.setPosition(0.3);
-                IntakeElevationB.setPosition(0.3);
+                Servo.toGround(true);
             } else {
-                IntakeElevationA.setPosition(0);
-                IntakeElevationB.setPosition(0);
+                Servo.toGround(false);
             }
             if (slow_the_flip_down) {
                 max *= 5;
@@ -250,41 +239,37 @@ public class XT1 extends LinearOpMode {
                     clawToggleCounter += 1;
                 }
                 if (sampleReady) {
-                    PendulumA.setPosition(0.05);
-                    PendulumB.setPosition(0.05);
-                    Wrist.setPosition(0);
-                    Claw.setPosition(0);
-                    IntakeElevationA.setPosition(0.13);
-                    IntakeElevationB.setPosition(0.13);
+                    Servo.movePendulum(0.05);
+                    Servo.setWrist(true);
+                    Servo.closeClaw(false);
+                    Servo.moveIntake(0.13);
                     sleep(500);
-                    Claw.setPosition(0.2);
+                    Servo.closeClaw(true);
                     sleep(100);
                 } else if (wallReadyCounter%2 == 0) {
-                    PendulumA.setPosition(0.5);
-                    PendulumB.setPosition(0.5);
+                    Servo.movePendulum(0.5);
                     sleep(600);
-                    Wrist.setPosition(0.657);
+                    Servo.setWrist(false);
                     sleep(300);
-                    PendulumA.setPosition(0);
-                    PendulumB.setPosition(0);
+                    Servo.movePendulum(0);
                     sleep(100000);
                 } else if (specimenReady) {
-                    PendulumA.setPosition(0.9);
-                    PendulumB.setPosition(0.9);
+                    Servo.movePendulum(0.9);
                     sleep(300);
-                    Wrist.setPosition(0);
-                    Claw.setPosition(0.2);
+                    Servo.setWrist(true);
+                    Servo.closeClaw(true);
+                    sleep(300);
+                    Servo.closeClaw(false);
                 } else {
-                    PendulumA.setPosition(0);
-                    PendulumB.setPosition(0);
-                    Wrist.setPosition(0);
-                    Claw.setPosition(0.2);
+                    Servo.movePendulum(0);
+                    Servo.setWrist(true);
+                    Servo.closeClaw(false);
                 }
                 if (claw_toggle) {
                     clawToggleCounter += 1;
                 }
                 if (claw_toggle) {
-                    Claw.setPosition(0);
+                    Servo.closeClaw(true);
                 }
                 if (toSub) {
                     toSubCounter += 1;
@@ -325,18 +310,14 @@ public class XT1 extends LinearOpMode {
                 rightBackDrive.setPower(rightBackPower);
 
                 if (intakeIn > 0.05) {
-                    IntakeA.setPosition(0.5+intakeIn/2);
-                    IntakeB.setPosition(0.5+intakeIn/2);
+                    Servo.runIntake(intakeIn,false);
                 } else {
-                    IntakeA.setPosition(0.5);
-                    IntakeB.setPosition(0.5);
+                    Servo.runIntake(intakeIn,false);
                 }
                 if (intakeOut > 0.05) {
-                    IntakeA.setPosition(0.5-intakeOut/2);
-                    IntakeB.setPosition(0.5-intakeOut/2);
+                    Servo.runIntake(intakeIn,true);
                 } else {
-                    IntakeA.setPosition(0.5);
-                    IntakeB.setPosition(0.5);
+                    Servo.runIntake(intakeIn,true);
                 }
 //            if (toSub && !firstTime) {
 //
