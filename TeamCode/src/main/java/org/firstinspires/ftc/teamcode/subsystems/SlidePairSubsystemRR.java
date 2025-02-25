@@ -30,4 +30,6 @@ public class SlidePairSubsystemRR {
             return system.slideTo();
         }
     }
+
+    public Action SlideToAction(){return new SlideToAction();}
 }
