@@ -11,7 +11,7 @@ public class ServoPivotTestOpmode extends LinearOpMode {
     @Override
     public void runOpMode(){
         ServoPivotSubsystem system = new ServoPivotSubsystem(hardwareMap, "rarmbase", "larmbase", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
-        ServoPivotSubsystem system2 = new ServoPivotSubsystem(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
+        ServoPivotSubsystem system2 = new ServoPivotSubsystem(hardwareMap, "raservo", "laservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
         if (gamepad1.a){
             system = system2;

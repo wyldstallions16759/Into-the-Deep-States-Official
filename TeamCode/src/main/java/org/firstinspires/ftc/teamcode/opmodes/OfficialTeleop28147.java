@@ -130,8 +130,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
             //horiz endeffector
             double horizontalArmRotate = -gamepad2.right_stick_y; // make this one STICKY!
 
-
-            double horizontalEndEffectorWrist = gamepad2.right_stick_x;
+            double horizontalEndEffectorWrist = -gamepad2.left_stick_x;
             boolean horizontalEndEffectorClawToggle = gamepad2.right_trigger > TRIGGER_TOLERANCE;
 
             //vertical extension (manual)
@@ -147,7 +146,6 @@ public class OfficialTeleop28147 extends LinearOpMode {
             boolean manualOverrideArmWrist = gamepad2.left_bumper;
 
             // vertical wristclaw
-            double verticalEndEffectorWrist = gamepad2.left_stick_x;
             boolean verticalEndEffectorClawToggle = gamepad2.left_trigger > TRIGGER_TOLERANCE;
 
             /// Transfer Mode Operator Controls
@@ -310,7 +308,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 // first, program the transfermode presets
                 if (transferState != previousTransferState){ // if state just changed
                     if (transferState == 1){ // state one - lower arm moves up, top arm moves down but not all the way.
-                        armBase.armToCustom(0.61);
+                        armBase.armToCustom(0.61); // retune upon mechanical adjustments.
                         horizontalWrist.wrist(1);
                         verticalWrist.wrist(-.95);
                         armWrist.armToCustom(.75);

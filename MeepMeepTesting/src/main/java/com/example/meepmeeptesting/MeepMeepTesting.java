@@ -31,7 +31,7 @@ public class MeepMeepTesting {
         return clip();
     }
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(750);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
@@ -97,7 +97,7 @@ public class MeepMeepTesting {
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
 //                .splineToConstantHeading(new Vector2d(12, 12), 0).build());
         Image img = null;
-        try { img = ImageIO.read(new File("D:/field.png")); }
+        try { img = ImageIO.read(new File("C:\\Users\\Team16759\\StudioProjects\\Into-the-Deep-States-Official\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\field.png")); }
         catch(IOException e) {}
 
         meepMeep.setBackground(img)
