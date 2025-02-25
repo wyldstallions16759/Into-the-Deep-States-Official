@@ -120,6 +120,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
             double yaw     =  gamepad1.right_stick_x;
 
             boolean slowDown = gamepad1.right_bumper;
+            boolean opSlowMode = gamepad1.b;
 
             ///  Standard Mode Operator Controls
 
@@ -204,20 +205,25 @@ public class OfficialTeleop28147 extends LinearOpMode {
             // what CAN you control during transfer mode? horizontal slides (normal), vertical slides (normal), bottom wrist - two buttons
             // you annot control the arm attached to vertical slides.
 
+            double opSpeedModifier = 1;
+            if (opSlowMode){
+                opSpeedModifier = 0.5;
+            }
+
             // Horizontal Slides
             if (horizontalExtensionIn){
 //                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 //                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-                rhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
-                lhSlide.setPower(-HORIZONTAL_SLIDE_SPEED);
+                rhSlide.setPower(-HORIZONTAL_SLIDE_SPEED*opSpeedModifier);
+                lhSlide.setPower(-HORIZONTAL_SLIDE_SPEED*opSpeedModifier);
             }
             else if (horizontalExtensionOut){
 //                rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 //                lhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-                rhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
-                lhSlide.setPower(HORIZONTAL_SLIDE_SPEED);
+                rhSlide.setPower(HORIZONTAL_SLIDE_SPEED*opSpeedModifier);
+                lhSlide.setPower(HORIZONTAL_SLIDE_SPEED*opSpeedModifier);
             }
             else{
                 rhSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
