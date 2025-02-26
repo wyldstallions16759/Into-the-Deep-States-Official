@@ -11,9 +11,11 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.subsystems.ServoSubsystem16760RR;
+import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystemRR;
 
 @Autonomous(name = "Specimen Auto")
 public class AutoA extends LinearOpMode {
@@ -41,18 +43,28 @@ public class AutoA extends LinearOpMode {
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
         ServoSubsystem16760RR servo = new ServoSubsystem16760RR(hardwareMap,telemetry);
+        SlidePairSubsystemRR Elevator = new SlidePairSubsystemRR(hardwareMap,
+                "ElevatorA", "ElevatorB",
+                3284, 3339,
+                DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
+                100);
 
         waitForStart();
 
         Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
                 drive.actionBuilder(START_POSE)
                         .lineToX(CLIP)
                         .build(),
-                clip(),
+                Elevator.SlideToTargetAction(0.3),
                 servo.closeClaw(true),
+                        servo.setWrist(false),
+                        servo.movePendulum(0)
+                ),
                 drive.actionBuilder(new Pose2d(CLIP, -6, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -36), 0)
+                        .turn(Math.PI)
                         .lineToX(-13)
                         .setTangent(Math.PI/2)
                         .lineToY(-45)
@@ -61,11 +73,13 @@ public class AutoA extends LinearOpMode {
                         .build(),
                 grab(),
                 drive.actionBuilder(new Pose2d(GRAB, -45, 0))
+                        .turn(Math.PI)
                         .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
                         .build(),
                 clip(),
                 drive.actionBuilder(new Pose2d(CLIP, -3,0))
-                        .setReversed(true)
+                        .turn(Math.PI)
+                        .setReversed(false)
                         .splineToConstantHeading(new Vector2d(-13, -45),0)
                         .setTangent(Math.PI/2)
                         .lineToY(-55)
@@ -74,6 +88,7 @@ public class AutoA extends LinearOpMode {
                         .build(),
                 grab(),
                 drive.actionBuilder(new Pose2d(GRAB, -55,0))
+                        .turn(Math.PI)
                         .splineToConstantHeading(new Vector2d(CLIP, 0),0)
                         .build(),
                 clip(),
