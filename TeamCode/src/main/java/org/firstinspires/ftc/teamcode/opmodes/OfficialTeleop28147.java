@@ -314,26 +314,24 @@ public class OfficialTeleop28147 extends LinearOpMode {
                 // first, program the transfermode presets
                 if (transferState != previousTransferState){ // if state just changed
                     if (transferState == 1){ // state one - lower arm moves up, top arm moves down but not all the way.
-                        armBase.armToCustom(0.61); // retune upon mechanical adjustments.
+                        armBase.armToCustom(0.65); // retune upon mechanical adjustments.
                         horizontalWrist.wrist(1);
                         verticalWrist.wrist(-.95);
-                        armWrist.armToCustom(.75);
+                        armWrist.armToCustom(.165);
                         verticalWrist.claw(WristSubsystem28147.ClawState.OPEN);
                         bottomRoll.armToRest();
                         horizontalArmPosition = 0;
                         horizontalWristPosition = 1;
                     }
                     else if (transferState == 2){
-                        armBase.armToCustom(.55);
-                        armWrist.armToCustom(.85 );
+                        armBase.armToCustom(.7);
+                        armWrist.armToCustom(.25 );
                     }
                     else if (transferState == 3){
                         verticalWrist.claw(WristSubsystem28147.ClawState.CLOSED);
                     }
                     else if (transferState == 4){
                         horizontalWrist.claw(WristSubsystem28147.ClawState.OPEN);
-                    }
-                    else if (transferState == 5){
                         transferState = 0;
                     }
                 }
