@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystemRR;
 public class AutoA extends LinearOpMode {
     public static final double GRAB = -56;
     public static final double CLIP = -35;
-    public static final Pose2d START_POSE = new Pose2d(-63,-6, 0);
+    public static final Pose2d START_POSE = new Pose2d(-63,-6, Math.PI);
     public static Action clip(){
         return new SleepAction(1);
     }
@@ -43,72 +43,68 @@ public class AutoA extends LinearOpMode {
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
         ServoSubsystem16760RR servo = new ServoSubsystem16760RR(hardwareMap,telemetry);
-        SlidePairSubsystemRR Elevator = new SlidePairSubsystemRR(hardwareMap,
+        SlidePairSubsystemRR Elevation = new SlidePairSubsystemRR(hardwareMap,
                 "ElevatorA", "ElevatorB",
                 3284, 3339,
                 DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
-                100);
+                20);
 
         waitForStart();
 
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                 drive.actionBuilder(START_POSE)
-                        .lineToX(CLIP)
-                        .build(),
-                Elevator.SlideToTargetAction(0.3),
-                servo.closeClaw(true),
-                        servo.setWrist(false),
-                        servo.movePendulum(0)
-                ),
-                drive.actionBuilder(new Pose2d(CLIP, -6, 0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-30, -36), 0)
-                        .turn(Math.PI)
-                        .lineToX(-13)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-45)
-                        .setTangent(0)
-                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
-                        .turn(Math.PI)
-                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
-                        .build(),
-                clip(),
-                drive.actionBuilder(new Pose2d(CLIP, -3,0))
-                        .turn(Math.PI)
-                        .setReversed(false)
-                        .splineToConstantHeading(new Vector2d(-13, -45),0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-55)
-                        .setTangent(0)
-                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -55,0))
-                        .turn(Math.PI)
-                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
-                        .build(),
-                clip(),
-                drive.actionBuilder(new Pose2d(CLIP, 0,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-40, -55),0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-63)
-                        .setTangent(0)
-                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -63,0))
-                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
-                        .build(),
-                clip(),
-                drive.actionBuilder(new Pose2d(CLIP, -6,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
+                        .lineToX(-62)
                         .build()
+//                        servo.closeClaw(true),
+//                        servo.movePendulum(0),
+//                        servo.setWrist(false),
+//                        Elevation.SlideToTargetAction(0.5)
+                        )
+//                drive.actionBuilder(new Pose2d(CLIP, -6, 0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-30, -36), 0)
+//                        .lineToX(-13)
+//                        .setTangent(Math.PI/2)
+//                        .lineToY(-45)
+//                        .setTangent(0)
+//                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
+//                        .build(),
+//                clip(),
+//                drive.actionBuilder(new Pose2d(CLIP, -3,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-13, -45),0)
+//                        .setTangent(Math.PI/2)
+//                        .lineToY(-55)
+//                        .setTangent(0)
+//                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                drive.actionBuilder(new Pose2d(GRAB, -55,0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
+//                        .build(),
+//                clip(),
+//                drive.actionBuilder(new Pose2d(CLIP, 0,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-40, -55),0)
+//                        .setTangent(Math.PI/2)
+//                        .lineToY(-63)
+//                        .setTangent(0)
+//                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                drive.actionBuilder(new Pose2d(GRAB, -63,0))
+//                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
+//                        .build(),
+//                clip(),
+//                drive.actionBuilder(new Pose2d(CLIP, -6,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
+//                        .build()
         ));
     }
 }

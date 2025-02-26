@@ -50,7 +50,6 @@ public class MeepMeepTesting {
                 drive.actionBuilder(new Pose2d(CLIP, -6, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -36), 0)
-                        .turn(Math.PI)
                         .lineToX(-13)
                         .setTangent(Math.PI/2)
                         .lineToY(-45)
@@ -58,14 +57,12 @@ public class MeepMeepTesting {
                         .lineToX(GRAB)
                         .build(),
                 grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -45, Math.PI))
-                        .turn(Math.PI)
+                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
                         .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
                         .build(),
                 clip(),
                 drive.actionBuilder(new Pose2d(CLIP, -3,0))
-                        .turn(Math.PI)
-                        .setReversed(false)
+                        .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-13, -45),0)
                         .setTangent(Math.PI/2)
                         .lineToY(-55)
@@ -73,8 +70,7 @@ public class MeepMeepTesting {
                         .lineToX(GRAB)
                         .build(),
                 grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -55,Math.PI))
-                        .turn(Math.PI)
+                drive.actionBuilder(new Pose2d(GRAB, -55,0))
                         .splineToConstantHeading(new Vector2d(CLIP, 0),0)
                         .build(),
                 clip(),
@@ -101,7 +97,7 @@ public class MeepMeepTesting {
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
 //                .splineToConstantHeading(new Vector2d(12, 12), 0).build());
         Image img = null;
-        try { img = ImageIO.read(new File("/Users/shivpillai/AndroidStudioProjects/Into-the-Deep-States-Official/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/field.png")); }
+        try { img = ImageIO.read(new File("C:\\Users\\Robotics Class\\StudioProjects\\a\\Into-the-Deep-States-Official\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\field.png")); }
         catch(IOException e) {}
 
         meepMeep.setBackground(img)

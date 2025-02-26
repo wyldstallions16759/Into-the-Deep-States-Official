@@ -157,10 +157,11 @@ public class XT1 extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
+            double yaw = -gamepad1.right_stick_x;
             float up = gamepad2.left_stick_y;
             float out = gamepad2.right_stick_y;
-            boolean claw_toggle = gamepad2.dpad_up;
+            boolean claw_open = gamepad2.dpad_up;
+            boolean claw0_close = gamepad2.dpad_down;
             boolean toSub = gamepad2.y;
             boolean toGround = gamepad2.a;
             boolean release_slightly_claw = gamepad2.left_bumper;
@@ -237,9 +238,12 @@ public class XT1 extends LinearOpMode {
                 if (sampleReady) {
                     sampleReadyCounter += 1;
                 }
-                if (claw_toggle) {
-                    clawToggleCounter += 1;
+                if (claw0_close) {
+                    Servo.closeClaw(true);
                 }
+            if (claw_open) {
+                Servo.closeClaw(false);
+            }
                 if (sampleReady) {
                     Servo.movePendulum(0.05);
                     Servo.setWrist(true);
@@ -267,12 +271,7 @@ public class XT1 extends LinearOpMode {
                     Servo.movePendulum(0);
 
                 }
-                if (claw_toggle) {
-                    clawToggleCounter += 1;
-                }
-                if (claw_toggle) {
-                    Servo.closeClaw(true);
-                }
+
                 if (toSub) {
                     toSubCounter += 1;
                 }
@@ -317,9 +316,14 @@ public class XT1 extends LinearOpMode {
                     Servo.runIntake(intakeIn,false);
                 }
                 if (intakeIn > 0.05) {
+                    IntakeA.setPosition(1);
+                    IntakeB.setPosition(1);
+                } else if (intakeOut > 0.05){
                     IntakeA.setPosition(0);
-                } else {
                     IntakeB.setPosition(0);
+                } else {
+                    IntakeA.setPosition(0.5);
+                    IntakeB.setPosition(0.5);
                 }
 //            if (toSub && !firstTime) {
 //
