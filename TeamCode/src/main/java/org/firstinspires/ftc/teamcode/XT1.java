@@ -85,6 +85,9 @@ public class XT1 extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+        IntakeA = hardwareMap.get(Servo.class, "IntakeA");
+        IntakeB = hardwareMap.get(Servo.class, "IntakeB");
+        IntakeA.setDirection(Servo.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -147,7 +150,6 @@ public class XT1 extends LinearOpMode {
         waitForStart();
         runtime.reset();
         double position = 0;
-        Wrist.scaleRange(0, 1);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -155,7 +157,7 @@ public class XT1 extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = -gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_y;
+            double yaw = gamepad1.right_stick_x;
             float up = gamepad2.left_stick_y;
             float out = gamepad2.right_stick_y;
             boolean claw_toggle = gamepad2.dpad_up;
@@ -241,29 +243,29 @@ public class XT1 extends LinearOpMode {
                 if (sampleReady) {
                     Servo.movePendulum(0.05);
                     Servo.setWrist(true);
-                    Servo.closeClaw(false);
+                    Servo.closeClaw(true);
+                    sleep(400);
                     Servo.moveIntake(0.13);
                     sleep(500);
-                    Servo.closeClaw(true);
+                    Servo.closeClaw(false);
                     sleep(100);
-                } else if (wallReadyCounter%2 == 0) {
+                } else if (wallReady) {
                     Servo.movePendulum(0.5);
                     sleep(600);
                     Servo.setWrist(false);
                     sleep(300);
-                    Servo.movePendulum(0);
-                    sleep(100000);
+                    Servo.movePendulum(0);;
                 } else if (specimenReady) {
                     Servo.movePendulum(0.9);
                     sleep(300);
                     Servo.setWrist(true);
+                    Servo.closeClaw(false);
+                    sleep(900);
                     Servo.closeClaw(true);
                     sleep(300);
-                    Servo.closeClaw(false);
                 } else {
                     Servo.movePendulum(0);
-                    Servo.setWrist(true);
-                    Servo.closeClaw(false);
+
                 }
                 if (claw_toggle) {
                     clawToggleCounter += 1;
@@ -309,15 +311,15 @@ public class XT1 extends LinearOpMode {
                 leftBackDrive.setPower(leftBackPower);
                 rightBackDrive.setPower(rightBackPower);
 
-                if (intakeIn > 0.05) {
+                if (intakeOut > 0.05) {
                     Servo.runIntake(intakeIn,false);
                 } else {
                     Servo.runIntake(intakeIn,false);
                 }
-                if (intakeOut > 0.05) {
-                    Servo.runIntake(intakeIn,true);
+                if (intakeIn > 0.05) {
+                    IntakeA.setPosition(0);
                 } else {
-                    Servo.runIntake(intakeIn,true);
+                    IntakeB.setPosition(0);
                 }
 //            if (toSub && !firstTime) {
 //

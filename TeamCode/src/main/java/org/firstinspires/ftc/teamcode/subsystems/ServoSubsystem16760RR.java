@@ -30,17 +30,62 @@ public class ServoSubsystem16760RR {
     }
 
     public class Wrist implements Action{
+        private boolean close;
+        public Wrist(boolean position){
+            this.close = position;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            system.setWrist(close);
+            return false;
+        }
+    }
+    public Action setWrist(boolean close){
+        return new Wrist(close);
+    }
+    public class Pendulum implements Action{
         private double position;
-        public Wrist(double position){
+        public Pendulum(double position){
             this.position = position;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//            system.wrist(position);
+            system.movePendulum(position);
             return false;
         }
     }
-    public Action Wrist(double position){
-        return new Wrist(position);
+    public Action movePendulum(double position){
+        return new Pendulum(position);
+    }
+    public class inIntake implements Action{
+        private double speed;
+        public inIntake(){
+            this.speed = 1;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            system.runIntake(speed,false);
+            return false;
+        }
+    }
+    public Action inIntake(double speed){
+        return new inIntake();
+    }
+    public Action moveIntake(double position){
+        return new Pendulum(position);
+    }
+    public class moveIntake implements Action{
+        private double position;
+        public moveIntake(double position){
+            this.position = position;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            system.movePendulum(position);
+            return false;
+        }
+    }
+    public Action Pendulum(double position){
+        return new Pendulum(position);
     }
 }

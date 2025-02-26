@@ -77,16 +77,16 @@ public class ServoSubsystem16760 {
         }
     }
     public void runIntake(double speed,boolean out) {
-        if (speed < 0.01 && !out) {
+        if (speed > 0.01 && !out) {
             IntakeA.setPosition(0.5 + speed/2);
             IntakeB.setPosition(0.5 + speed/2);
         } else {
             IntakeA.setPosition(0.5);
             IntakeB.setPosition(0.5);
         }
-        if (speed < 0.01 && out) {
-            IntakeA.setPosition(0.5 - speed/2);
-            IntakeB.setPosition(0.5 - speed/2);
+        if (speed > 0.01 && out) {
+            IntakeA.setPosition(0);
+            IntakeB.setPosition(0);
         } else {
             IntakeA.setPosition(0.5);
             IntakeB.setPosition(0.5);
