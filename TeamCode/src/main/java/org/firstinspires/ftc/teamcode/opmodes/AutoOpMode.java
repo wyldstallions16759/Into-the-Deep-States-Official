@@ -13,17 +13,34 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "4 Specimen Auto")
+@Autonomous(name = "Auto")
 public class AutoOpMode extends LinearOpMode {
     public static final double GRAB = -56;
     public static final double CLIP = -35;
     public static final Pose2d START_POSE = new Pose2d(-63,-6, 0);
+
+    private static WristSubsystem28147RR wrist;
+    private static ServoPivotSubsystemRR armBase;
+    private static ServoPivotSubsystemRR armWrist;
+
     public static Action clip(){
-        return new SleepAction(1);
+        return new SequentialAction(
+            armBase.armToRaisedAction(),
+            armWrist.armToRaisedAction(),
+            wrist.wrist(-1)
+        );
     }
     public static Action grab(){
-        return clip();
+        return new SequentialAction(
+            armBase.armToRestAction(),
+            armWrist.armToRestAction(),
+            wrist.wrist(1)
+        );
     }
     @Override
     public void runOpMode(){
@@ -35,6 +52,11 @@ public class AutoOpMode extends LinearOpMode {
         //          d. roadrunner
         //      2. Create path
         //      3. Run Actions Blocking
+        wrist = new WristSubsystem28147RR(hardwareMap, telemetry,
+                "topclawwrist", "topclaw");
+        armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
+        armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
+
 
         Pose2d beginPose = new Pose2d(0, 0, 0);
 
@@ -42,7 +64,7 @@ public class AutoOpMode extends LinearOpMode {
 
         waitForStart();
 
-        Actions.runBlocking(new SequentialAction(
+        SequentialAction action = new SequentialAction(
                 drive.actionBuilder(START_POSE)
                         .lineToX(CLIP)
                         .build(),
@@ -91,6 +113,12 @@ public class AutoOpMode extends LinearOpMode {
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
                         .build()
-        ));
+        );
+
+        SequentialAction testArmAction = new SequentialAction(
+                grab()
+        );
+
+        Actions.runBlocking(testArmAction);
     }
 }

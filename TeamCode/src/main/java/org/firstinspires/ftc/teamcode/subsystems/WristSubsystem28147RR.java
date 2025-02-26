@@ -13,9 +13,6 @@ public class WristSubsystem28147RR {
     public WristSubsystem28147RR(HardwareMap hardwareMap, Telemetry telemetry, String wrist, String claw){
         system = new WristSubsystem28147(hardwareMap, telemetry, wrist, claw);
     }
-    public WristSubsystem28147RR(HardwareMap hardwareMap, Telemetry telemetry, String wrist, String claw, boolean maxrange) {
-        system = new WristSubsystem28147(hardwareMap, telemetry, wrist, claw, maxrange);
-    }
     public class ClawAction implements Action{
         @Override
         public boolean run(TelemetryPacket telemetryPacket){
@@ -23,7 +20,7 @@ public class WristSubsystem28147RR {
             return false;
         }
     }
-    public Action ClawAction(){
+    public Action clawAction(){
         return new ClawAction();
     }
 
@@ -38,7 +35,7 @@ public class WristSubsystem28147RR {
             return false;
         }
     }
-    public Action ClawToAction(WristSubsystem28147.ClawState to){
+    public Action clawToAction(WristSubsystem28147.ClawState to){
         return new ClawToAction(to);
     }
 
@@ -53,7 +50,7 @@ public class WristSubsystem28147RR {
             return false;
         }
     }
-    public Action Wrist(double position){
+    public Action wrist(double position){
         return new Wrist(position);
     }
 }

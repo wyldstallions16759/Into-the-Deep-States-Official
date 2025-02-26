@@ -28,20 +28,7 @@ public class WristSubsystem28147{
         clawServo = hardwareMap.get(Servo.class, claw);
 
         wristServo.scaleRange(0.225, 0.925);
-        clawServo.scaleRange(0.28147, 0.43); //0.5 opened sufficiently
-
-        this.claw(ClawState.CLOSED);
-        //this.wrist(0);
-    }
-
-    public WristSubsystem28147(HardwareMap hardwareMap, Telemetry telemetry, String wrist, String claw, boolean maxrange){
-        this.telemetry = telemetry;
-
-        wristServo = hardwareMap.get(Servo.class, wrist);
-        clawServo = hardwareMap.get(Servo.class, claw);
-
-        wristServo.scaleRange(0, 1);
-        clawServo.scaleRange(0.275, 0.43); //0.5 opened sufficiently
+        clawServo.scaleRange(0.275, 0.5); //0.5 opened sufficiently
 
         this.claw(ClawState.CLOSED);
         //this.wrist(0);

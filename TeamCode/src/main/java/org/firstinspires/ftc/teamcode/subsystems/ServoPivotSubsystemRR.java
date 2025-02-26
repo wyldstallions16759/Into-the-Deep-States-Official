@@ -47,4 +47,8 @@ public class ServoPivotSubsystemRR {
             return false;
         }
     }
+
+    public Action armToRestAction(){
+        return new ArmToRestAction();
+    }
 }
