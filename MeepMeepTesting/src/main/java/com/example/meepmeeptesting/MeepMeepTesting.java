@@ -21,13 +21,21 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
-    public static final double GRAB = -56;
-    public static final double CLIP = -35;
-    public static final Pose2d START_POSE = new Pose2d(-63,-6, 0);
+    public static final double GRAB = -59.5;
+    public static final double ALMOST_GRAB = -40;
+    public static final double CLIP = -39;
+    public static final double PUSH = -50;
+    public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
     public static Action clip(){
-        return new SleepAction(1);
+        return new SleepAction(0.25);
     }
     public static Action grab(){
+        return clip();
+    }
+    public static Action grabPos(){
+        return clip();
+    }
+    public static Action clipPos(){
         return clip();
     }
     public static void main(String[] args) {
@@ -41,63 +49,78 @@ public class MeepMeepTesting {
 
         DriveShim drive = myBot.getDrive();
 
-
-        myBot.runAction(new SequentialAction(
+        SequentialAction action = new SequentialAction(
+                clipPos(),
                 drive.actionBuilder(START_POSE)
                         .lineToX(CLIP)
                         .build(),
+                new SleepAction(0.65),
                 clip(),
-                drive.actionBuilder(new Pose2d(CLIP, -6, 0))
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -8, 0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-30, -36), 0)
-                        .lineToX(-13)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-45)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(-30, -35), 0)
+                        .splineToConstantHeading(new Vector2d(-10, -42),Math.PI)
+                        .splineToConstantHeading(new Vector2d(PUSH,-42),0)
+                        .splineToConstantHeading(new Vector2d(-10, -55),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -55),0)
+                        .splineToConstantHeading(new Vector2d(-10, -62),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -62),0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -12),0)
                         .build(),
                 clip(),
-                drive.actionBuilder(new Pose2d(CLIP, -3,0))
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -12,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-13, -45),0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-55)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -55,0))
-                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
                         .build(),
                 clip(),
-                drive.actionBuilder(new Pose2d(CLIP, 0,0))
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -10,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-40, -55),0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-63)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
                         .lineToX(GRAB)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -63,0))
-                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
+                        .build(),grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
                         .build(),
                 clip(),
+                grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+                        .lineToX(GRAB)
+                        .build(),grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -4),0)
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -4,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),0)
                         .build()
+        );
 
-
-        ));
+        myBot.runAction(action);
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
 //                .splineToConstantHeading(new Vector2d(12, 12), 0).build());
         Image img = null;
-        try { img = ImageIO.read(new File("C:\\Users\\Team16759\\StudioProjects\\Into-the-Deep-States-Official\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\field.png")); }
+        try { img = ImageIO.read(new File("D:\\field.png")); }
         catch(IOException e) {}
 
         meepMeep.setBackground(img)
