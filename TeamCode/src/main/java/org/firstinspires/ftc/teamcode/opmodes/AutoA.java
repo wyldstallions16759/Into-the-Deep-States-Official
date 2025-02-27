@@ -54,57 +54,61 @@ public class AutoA extends LinearOpMode {
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                 drive.actionBuilder(START_POSE)
-                        .lineToX(-62)
+                        .lineToX(CLIP)
+                        .build(),
+                        servo.closeClaw(true),
+                        servo.movePendulum(0),
+                        servo.setWrist(false),
+                        Elevation.SlideToTargetAction(0.5)
+                        ),
+                Elevation.SlideToTargetAction(0.3),
+                servo.closeClaw(false),
+                new ParallelAction(
+                Elevation.SlideToTargetAction(0),
+                drive.actionBuilder(new Pose2d(CLIP, -6, 0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-30, -36), 0)
+                        .lineToX(-13)
+                        .setTangent(Math.PI/2)
+                        .lineToY(-45)
+                        .setTangent(0)
+                        .lineToX(GRAB)
                         .build()
-//                        servo.closeClaw(true),
-//                        servo.movePendulum(0),
-//                        servo.setWrist(false),
-//                        Elevation.SlideToTargetAction(0.5)
-                        )
-//                drive.actionBuilder(new Pose2d(CLIP, -6, 0))
-//                        .setReversed(true)
-//                        .splineToConstantHeading(new Vector2d(-30, -36), 0)
-//                        .lineToX(-13)
-//                        .setTangent(Math.PI/2)
-//                        .lineToY(-45)
-//                        .setTangent(0)
-//                        .lineToX(GRAB)
-//                        .build(),
-//                grab(),
-//                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
-//                        .build(),
-//                clip(),
-//                drive.actionBuilder(new Pose2d(CLIP, -3,0))
-//                        .setReversed(true)
-//                        .splineToConstantHeading(new Vector2d(-13, -45),0)
-//                        .setTangent(Math.PI/2)
-//                        .lineToY(-55)
-//                        .setTangent(0)
-//                        .lineToX(GRAB)
-//                        .build(),
-//                grab(),
-//                drive.actionBuilder(new Pose2d(GRAB, -55,0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
-//                        .build(),
-//                clip(),
-//                drive.actionBuilder(new Pose2d(CLIP, 0,0))
-//                        .setReversed(true)
-//                        .splineToConstantHeading(new Vector2d(-40, -55),0)
-//                        .setTangent(Math.PI/2)
-//                        .lineToY(-63)
-//                        .setTangent(0)
-//                        .lineToX(GRAB)
-//                        .build(),
-//                grab(),
-//                drive.actionBuilder(new Pose2d(GRAB, -63,0))
-//                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
-//                        .build(),
-//                clip(),
-//                drive.actionBuilder(new Pose2d(CLIP, -6,0))
-//                        .setReversed(true)
-//                        .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
-//                        .build()
+                        ),
+                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
+                        .build(),
+                clip(),
+                drive.actionBuilder(new Pose2d(CLIP, -3,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-13, -45),0)
+                        .setTangent(Math.PI/2)
+                        .lineToY(-55)
+                        .setTangent(0)
+                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                drive.actionBuilder(new Pose2d(GRAB, -55,0))
+                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
+                        .build(),
+                clip(),
+                drive.actionBuilder(new Pose2d(CLIP, 0,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-40, -55),0)
+                        .setTangent(Math.PI/2)
+                        .lineToY(-63)
+                        .setTangent(0)
+                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                drive.actionBuilder(new Pose2d(GRAB, -63,0))
+                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
+                        .build(),
+                clip(),
+                drive.actionBuilder(new Pose2d(CLIP, -6,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-60, -55),Math.PI/2)
+                        .build()
         ));
     }
 }
