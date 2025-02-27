@@ -69,10 +69,6 @@ public class MeepMeepTesting {
                                 .lineToX(GRAB)
                                 .lineToX(-13)
                                 .setTangent(Math.PI/2)
-                                .lineToY(-63)
-                                .setTangent(0)
-                                .lineToX(GRAB)
-                                .setTangent(Math.PI/2)
                                 .lineToY(-48)
                                 .build()
                 ),
