@@ -82,18 +82,18 @@ public class FourSpecimen extends LinearOpMode {
                 drive.actionBuilder(START_POSE)
                         .lineToX(CLIP)
                         .build(),
-                new SleepAction(0.65),
+                new SleepAction(0.75),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0)
-                        .splineToConstantHeading(new Vector2d(-10, -42),Math.PI)
-                        .splineToConstantHeading(new Vector2d(PUSH,-42),0)
-                        .splineToConstantHeading(new Vector2d(-10, -55),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -55),0)
-                        .splineToConstantHeading(new Vector2d(-10, -62),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -62),0)
+                        .splineToConstantHeading(new Vector2d(-10, -45),Math.PI)
+                        .splineToConstantHeading(new Vector2d(PUSH,-45),0)
+                        .splineToConstantHeading(new Vector2d(-10, -57),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -57),0)
+                        .splineToConstantHeading(new Vector2d(-10, -64),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -64),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
                         .lineToX(GRAB)
                         .build(),

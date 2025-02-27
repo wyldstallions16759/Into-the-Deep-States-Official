@@ -26,6 +26,7 @@ public class MeepMeepTesting {
     public static final double CLIP = -39;
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
+
     public static Action clip(){
         return new SleepAction(0.25);
     }
@@ -52,20 +53,23 @@ public class MeepMeepTesting {
         SequentialAction action = new SequentialAction(
                 clipPos(),
                 drive.actionBuilder(START_POSE)
-                        .lineToX(CLIP)
+                        .splineToConstantHeading(new Vector2d(CLIP,-4),0)
                         .build(),
-                new SleepAction(0.65),
+                new SleepAction(0.75),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -8, 0))
+                drive.actionBuilder(new Pose2d(CLIP, -4, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0)
-                        .splineToConstantHeading(new Vector2d(-10, -42),Math.PI)
-                        .splineToConstantHeading(new Vector2d(PUSH,-42),0)
-                        .splineToConstantHeading(new Vector2d(-10, -55),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -55),0)
-                        .splineToConstantHeading(new Vector2d(-10, -62),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -62),0)
+                        .splineToConstantHeading(new Vector2d(-8, -45),Math.PI)
+                        .splineToConstantHeading(new Vector2d(PUSH,-45),0)
+                        .splineToConstantHeading(new Vector2d((PUSH-8)/2,-45),0)
+                        .splineToConstantHeading(new Vector2d(-8, -57),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -57),0)
+                        .splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
+                        .splineToConstantHeading(new Vector2d(-8, -64),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -64),0)
+                        //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
                         .lineToX(GRAB)
                         .build(),
@@ -78,7 +82,7 @@ public class MeepMeepTesting {
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -12,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),Math.PI)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
@@ -90,9 +94,22 @@ public class MeepMeepTesting {
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -10,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),Math.PI)
                         .lineToX(GRAB)
-                        .build(),grab(),
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                    .setReversed(true)
+                    .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),Math.PI)
+                    .lineToX(GRAB)
+                    .build(),
+                grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
                         .splineToConstantHeading(new Vector2d(CLIP, -6),0)
@@ -101,18 +118,7 @@ public class MeepMeepTesting {
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
-                        .lineToX(GRAB)
-                        .build(),grab(),
-                clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -4),0)
-                        .build(),
-                clip(),
-                grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -4,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),0)
+                        .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
                         .build()
         );
 
@@ -120,7 +126,7 @@ public class MeepMeepTesting {
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
 //                .splineToConstantHeading(new Vector2d(12, 12), 0).build());
         Image img = null;
-        try { img = ImageIO.read(new File("D:\\field.png")); }
+        try { img = ImageIO.read(new File("C:\\Users\\Team16759\\StudioProjects\\Into-the-Deep-States-Official\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\field.png")); }
         catch(IOException e) {}
 
         meepMeep.setBackground(img)
