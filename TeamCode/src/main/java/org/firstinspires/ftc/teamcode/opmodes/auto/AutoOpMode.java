@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -18,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto")
+@Autonomous(name = "Auto_4/3spec")
 public class AutoOpMode extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double CLIP = -39;
