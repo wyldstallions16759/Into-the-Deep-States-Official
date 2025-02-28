@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
 @Autonomous(name = "Auto_4_Spliney", group = "_good")
 public class SplineyAutoFour extends LinearOpMode {
-    public static final double GRAB = -59.5;
+    public static final double GRAB = -61.5;
     public static final double ALMOST_GRAB = -40;
-    public static final double CLIP = -39;
+    public static final double CLIP = -40;//changed
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
 
