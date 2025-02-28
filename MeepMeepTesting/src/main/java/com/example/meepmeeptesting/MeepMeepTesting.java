@@ -66,9 +66,9 @@ public class MeepMeepTesting {
                         .splineToConstantHeading(new Vector2d((PUSH-5)/2,-45),0.1)// retreat behind second one
                         .splineToConstantHeading(new Vector2d(-6, -53),3.4) // get behind second one
                         .splineToConstantHeading(new Vector2d(PUSH-4, -53),0) // push second one
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-55),0.1) // retreat for third push
-                        .splineToConstantHeading(new Vector2d(-6, -63),3.4) // get behind third
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -63),0) // push third.
+                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-53),0.1) // retreat for third push
+                        .splineToConstantHeading(new Vector2d(-6, -62),3.4) // get behind third
+                        .splineToConstantHeading(new Vector2d(PUSH-4, -62),0) // push third.
                         //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
                         .lineToX(GRAB)

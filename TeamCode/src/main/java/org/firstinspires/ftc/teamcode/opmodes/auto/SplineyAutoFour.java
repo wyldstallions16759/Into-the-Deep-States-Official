@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+// four specimen - uses both preloads, pushes in two
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -16,8 +18,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_5_Spliney")
-public class SplineyAutoFive extends LinearOpMode {
+@Autonomous(name = "Auto_4_Spliney")
+public class SplineyAutoFour extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
@@ -93,9 +95,9 @@ public class SplineyAutoFive extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d((PUSH-5)/2,-45),0.1)// retreat behind second one
                         .splineToConstantHeading(new Vector2d(-6, -53),3.4) // get behind second one
                         .splineToConstantHeading(new Vector2d(PUSH-4, -53),0) // push second one
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-53),0.1) // retreat for third push
-                        .splineToConstantHeading(new Vector2d(-6, -62),3.4) // get behind third
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -62),0) // push third.
+//                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-53),0.1) // retreat for third push
+//                        .splineToConstantHeading(new Vector2d(-6, -62),3.4) // get behind third
+//                        .splineToConstantHeading(new Vector2d(PUSH-4, -62),0) // push third.
                         //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
                         .lineToX(GRAB)
@@ -131,19 +133,20 @@ public class SplineyAutoFive extends LinearOpMode {
                         .build(),
                 clip(),
                 grabPos(),
+//                grabPos(),
+//                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+////                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                clipPos(),
+//                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
+//                        .build(),
+//                clip(),
+//                grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
-//                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
-                        .build(),
-                clip(),
-                grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
                         .build()
