@@ -46,8 +46,8 @@ public class ServoSubsystem16760 {
 
     public void toGround(boolean go){
         if (go) {
-            IntakeElevationA.setPosition(0.27);
-            IntakeElevationB.setPosition(0.27);
+            IntakeElevationA.setPosition(0.25);
+            IntakeElevationB.setPosition(0.25);
         } else {
             IntakeElevationA.setPosition(0);
             IntakeElevationB.setPosition(0);

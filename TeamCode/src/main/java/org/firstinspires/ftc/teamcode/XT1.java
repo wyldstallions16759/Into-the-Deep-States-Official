@@ -88,15 +88,15 @@ public class XT1 extends LinearOpMode {
         IntakeA = hardwareMap.get(Servo.class, "IntakeA");
         IntakeB = hardwareMap.get(Servo.class, "IntakeB");
         IntakeA.setDirection(Servo.Direction.REVERSE);
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
@@ -155,9 +155,9 @@ public class XT1 extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral = -gamepad1.left_stick_x;
-            double yaw = -gamepad1.right_stick_x;
+            double axial   = -gamepad1.left_stick_y;
+            double lateral =  gamepad1.left_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
             float up = gamepad2.left_stick_y;
             float out = gamepad2.right_stick_y;
             boolean claw_open = gamepad2.dpad_up;
@@ -207,9 +207,7 @@ public class XT1 extends LinearOpMode {
             if (slow_the_flip_down) {
                 max *= 5;
             }
-            if (combinedPos > 800) {
-                max *= combinedPos / 800;
-            }
+
 
             if (up > 0.05) {
                 Elevation.setPower(-up);
@@ -260,7 +258,7 @@ public class XT1 extends LinearOpMode {
                     sleep(300);
                     Servo.movePendulum(0);;
                 } else if (specimenReady) {
-                    Servo.movePendulum(0.9);
+                    Servo.movePendulum(0.7);
                     sleep(300);
                     Servo.setWrist(true);
                     Servo.closeClaw(false);
@@ -356,6 +354,7 @@ public class XT1 extends LinearOpMode {
 //            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
 //            telemetry.addData("CombinedPos",combinedPos);
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("gobilda", drive.pinpoint.getPositionRR());
                 telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
                 telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
                 telemetry.update();

@@ -52,74 +52,15 @@ public class MeepMeepTesting {
 
                 ),
                 new ParallelAction(
-                        drive.actionBuilder(new Pose2d(REAL_CLIP, -6, Math.PI))
-                                .lineToX(CLIP)
+                        drive.actionBuilder(new Pose2d(REAL_CLIP, -6, 0))
                                 .setReversed(true)
-                                .splineToConstantHeading(new Vector2d(-45, -36), 0)
-                                .turnTo(0)
-                                .lineToX(-13)
-                                .setTangent(Math.PI/2)
-                                .lineToY(-45)
-                                .setTangent(0)
-                                .lineToX(GRAB)
-                                .lineToX(-13)
-                                .setTangent(Math.PI/2)
-                                .lineToY(-53)
-                                .setTangent(0)
-                                .lineToX(GRAB)
-                                .lineToX(-13)
-                                .setTangent(Math.PI/2)
-                                .lineToY(-48)
+                                .splineToConstantHeading(new Vector2d(-30, -20), 0)
                                 .build()
-                ),
-                drive.actionBuilder(new Pose2d(GRAB, -48, 0))
-                        .turnTo(Math.PI)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-20)
-                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
-                        .setTangent(0)
-                        .lineToX(REAL_CLIP)
-                        .build(),
-                clip(),
-                drive.actionBuilder(new Pose2d(REAL_CLIP, -3,Math.PI))
-                        .lineToX(CLIP)
-                        .turnTo(0)
-                        .setReversed(false)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-30)
-                        .splineToConstantHeading(new Vector2d(GRAB, -48),0)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -48,0))
-                        .turnTo(Math.PI)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-20)
-                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
-                        .lineToX(REAL_CLIP)
-                        .build(),
-                clip(),
-                drive.actionBuilder(new Pose2d(REAL_CLIP, 0,Math.PI))
-                        .lineToX(CLIP)
-                        .setReversed(false)
-                        .turnTo(0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-30)
-                        .splineToConstantHeading(new Vector2d(GRAB, -48),0)
-                        .build(),
-                grab(),
-                drive.actionBuilder(new Pose2d(GRAB, -48,0))
-                        .turnTo(Math.PI)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-20)
-                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
-                        .build(),
-                clip()
-
-        ));
+        )));
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
 //                .splineToConstantHeading(new Vector2d(12, 12), 0).build());
         Image img = null;
-        try { img = ImageIO.read(new File("/Users/shivpillai/AndroidStudioProjects/Into-the-Deep-States-Official/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/field.png")); }
+        try { img = ImageIO.read(new File("C:\\Users\\Robotics Class\\StudioProjects\\a\\Into-the-Deep-States-Official\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\field.png")); }
         catch(IOException e) {}
 
         meepMeep.setBackground(img)
