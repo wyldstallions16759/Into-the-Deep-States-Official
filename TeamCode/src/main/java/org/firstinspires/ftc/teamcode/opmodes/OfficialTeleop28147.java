@@ -330,9 +330,13 @@ public class OfficialTeleop28147 extends LinearOpMode {
                     else if (transferState == 3){
                         verticalWrist.claw(WristSubsystem28147.ClawState.CLOSED);
                     }
-                    else if (transferState == 4){
+                    else if (transferState == 4) {
                         horizontalWrist.claw(WristSubsystem28147.ClawState.OPEN);
+                    }
+                    else if (transferState == 5){
                         transferState = 0;
+                        armBase.armToRest();
+                        armWrist.armToRest();
                     }
                // }
                 previousTransferState = transferState;

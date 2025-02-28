@@ -27,6 +27,12 @@ public class MeepMeepTesting {
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
 
+
+
+    public static final double SHIFT = 6;
+    public static final double PUSH_1 = -38-SHIFT;
+    public static final double PUSH_2 = -48-SHIFT;
+
     public static Action clip(){
         return new SleepAction(0.25);
     }
@@ -61,18 +67,53 @@ public class MeepMeepTesting {
                 drive.actionBuilder(new Pose2d(CLIP, -4, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
-                        .splineToConstantHeading(new Vector2d(-6, -45),Math.PI) // get behind first one
-                        .splineToConstantHeading(new Vector2d(PUSH-4,-45),0) //push it
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-45),0.1)// retreat behind second one
-                        .splineToConstantHeading(new Vector2d(-6, -53),3.4) // get behind second one
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -53),0) // push second one
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-53),0.1) // retreat for third push
-                        .splineToConstantHeading(new Vector2d(-6, -62),3.4) // get behind third
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -62),0) // push third.
-                        //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
+                        .splineToConstantHeading(new Vector2d(PUSH-4,PUSH_1),0) //push it
+                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_1),0.1)// retreat behind second one
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_2),3.4) // get behind second one
+                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_2),0) // push second one
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
                         .lineToX(GRAB)
-                        .build());
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
+                        .strafeTo(new Vector2d(CLIP, -12))
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -12,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
+                        .strafeTo(new Vector2d(CLIP, -10))
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -10,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+                        .strafeTo(new Vector2d(CLIP, -8))
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
+                        .build()
+        );
 
         myBot.runAction(action);
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))

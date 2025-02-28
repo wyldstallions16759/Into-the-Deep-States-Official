@@ -16,13 +16,18 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_5_Spliney", group = "_good")
+@Autonomous(name = "Auto_5_Spliney", group = "bad")
 public class SplineyAutoFive extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
+
+    public static final double SHIFT = 4;
+    public static final double PUSH_1 = -41-SHIFT;
+    public static final double PUSH_2 = -51-SHIFT;
+    public static final double PUSH_3 = -61-SHIFT;
 
     private static WristSubsystem28147RR wrist;
     private static ServoPivotSubsystemRR armBase;
@@ -88,14 +93,14 @@ public class SplineyAutoFive extends LinearOpMode {
                 drive.actionBuilder(new Pose2d(CLIP, -4, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
-                        .splineToConstantHeading(new Vector2d(-6, -45),Math.PI) // get behind first one
-                        .splineToConstantHeading(new Vector2d(PUSH-4,-45),0) //push it
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-45),0.1)// retreat behind second one
-                        .splineToConstantHeading(new Vector2d(-6, -53),3.4) // get behind second one
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -53),0) // push second one
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,-53),0.1) // retreat for third push
-                        .splineToConstantHeading(new Vector2d(-6, -62),3.4) // get behind third
-                        .splineToConstantHeading(new Vector2d(PUSH-4, -62),0) // push third.
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
+                        .splineToConstantHeading(new Vector2d(PUSH-4,PUSH_1),0) //push it
+                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_1),0.1)// retreat behind second one
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_2),3.4) // get behind second one
+                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_2),0) // push second one
+                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_2),0.1) // retreat for third push
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_3),3.4) // get behind third
+                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_3),0) // push third.
                         //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
                         .lineToX(GRAB)
