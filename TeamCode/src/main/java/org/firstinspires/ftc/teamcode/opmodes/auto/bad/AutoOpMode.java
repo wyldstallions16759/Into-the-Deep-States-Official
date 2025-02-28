@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
-
-// four specimen - uses both preloads, pushes in two
+package org.firstinspires.ftc.teamcode.opmodes.auto.bad;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -18,19 +16,11 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_4_Spliney", group = "_good")
-public class SplineyAutoFour extends LinearOpMode {
+@Autonomous(name = "Auto_4/3spec", group = "bad")
+public class AutoOpMode extends LinearOpMode {
     public static final double GRAB = -59.5;
-    public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
-    public static final double PUSH = -50;
-    public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
-
-
-    public static final double SHIFT = 4;
-    public static final double PUSH_1 = -45+SHIFT;
-    public static final double PUSH_2 = -55+SHIFT;
-
+    public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
 
     private static WristSubsystem28147RR wrist;
     private static ServoPivotSubsystemRR armBase;
@@ -81,67 +71,72 @@ public class SplineyAutoFour extends LinearOpMode {
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
 
+
+
         waitForStart();
 
-        SequentialAction action =  new SequentialAction(
+        SequentialAction action = new SequentialAction(
                 clipPos(),
                 drive.actionBuilder(START_POSE)
-                        .splineToConstantHeading(new Vector2d(CLIP,-4),0) // clip preset
+                        .lineToX(CLIP)
                         .build(),
-                new SleepAction(0.75), //wait for arm to raise
+                new SleepAction(0.65),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -4, 0))
+                drive.actionBuilder(new Pose2d(CLIP, -8, 0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
-                        .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
-                        .splineToConstantHeading(new Vector2d(PUSH-4,PUSH_1),0) //push it
-
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_1),0.1)// retreat behind second one
-                        .splineToConstantHeading(new Vector2d(-6, PUSH_2),3.4) // get behind second one
-                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_2),0) // push second one
-
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
+                        .splineToConstantHeading(new Vector2d(-30, -37), 0)
+                        .lineToX(-13)
+                        .setTangent(Math.PI/2)
+                        .lineToY(-45)
+                        .setTangent(0)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
-                        .strafeTo(new Vector2d(CLIP, -10))
+                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -10,0))
+                drive.actionBuilder(new Pose2d(CLIP, -3,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
-//                        .lineToX(GRAB)
+                        .splineToConstantHeading(new Vector2d(-13, -46),0)
+                        .setTangent(Math.PI/2)
+                        .lineToY(-55)
+                        .setTangent(0)
+                        .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
-                        .strafeTo(new Vector2d(CLIP, -8))
+                drive.actionBuilder(new Pose2d(GRAB, -55,0))
+                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                drive.actionBuilder(new Pose2d(CLIP, 0,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
-//                        .lineToX(GRAB)
+                        .splineToConstantHeading(new Vector2d(-40, -63),0)
+                        .setTangent(Math.PI/2)
+                        //.lineToY(-63)
+                        .setTangent(0)
+                        .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
-                        .strafeTo(new Vector2d(CLIP, -6))
+                drive.actionBuilder(new Pose2d(GRAB, -63,0))
+                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
                         .build(),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
+                        .splineToConstantHeading(new Vector2d(-65, -55),Math.PI/2)
                         .build()
+        );
+
+        SequentialAction testArmAction = new SequentialAction(
+                grab()
         );
 
         Actions.runBlocking(action);

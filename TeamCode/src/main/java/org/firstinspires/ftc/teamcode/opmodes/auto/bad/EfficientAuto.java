@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto.bad;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -16,10 +16,12 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_4/3spec", group = "bad")
-public class AutoOpMode extends LinearOpMode {
+@Autonomous(name = "Auto_5/4spec", group = "bad")
+public class EfficientAuto extends LinearOpMode {
     public static final double GRAB = -59.5;
+    public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
+    public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
 
     private static WristSubsystem28147RR wrist;
@@ -85,53 +87,60 @@ public class AutoOpMode extends LinearOpMode {
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8, 0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-30, -37), 0)
-                        .lineToX(-13)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-45)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(-30, -35), 0)
+                        .splineToConstantHeading(new Vector2d(-10, -42),Math.PI)
+                        .splineToConstantHeading(new Vector2d(PUSH,-42),0)
+                        .splineToConstantHeading(new Vector2d(-10, -55),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -55),0)
+                        .splineToConstantHeading(new Vector2d(-10, -62),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -62),0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -12),0)
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -3,0))
+                drive.actionBuilder(new Pose2d(CLIP, -12,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-13, -46),0)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-55)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
                         .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -55,0))
-                        .splineToConstantHeading(new Vector2d(CLIP, 0),0)
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, 0,0))
+                drive.actionBuilder(new Pose2d(CLIP, -10,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-40, -63),0)
-                        .setTangent(Math.PI/2)
-                        //.lineToY(-63)
-                        .setTangent(0)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
                         .lineToX(GRAB)
-                        .build(),
-                grab(),
+                        .build(),grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -63,0))
-                        .splineToConstantHeading(new Vector2d(CLIP,-6),0)
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
                         .build(),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(-65, -55),Math.PI/2)
+                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+                        .lineToX(GRAB)
+                        .build(),grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                        .splineToConstantHeading(new Vector2d(CLIP, -4),0)
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -4,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),0)
                         .build()
         );
 

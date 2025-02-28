@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
-
+package org.firstinspires.ftc.teamcode.opmodes.auto.bad;
+// leave a preset for alliance member?
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_5/4spec", group = "bad")
-public class EfficientAuto extends LinearOpMode {
+@Autonomous(name = "Auto_4spec", group = "bad")
+public class FourSpecimen extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
@@ -82,18 +82,18 @@ public class EfficientAuto extends LinearOpMode {
                 drive.actionBuilder(START_POSE)
                         .lineToX(CLIP)
                         .build(),
-                new SleepAction(0.65),
+                new SleepAction(0.75),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0)
-                        .splineToConstantHeading(new Vector2d(-10, -42),Math.PI)
-                        .splineToConstantHeading(new Vector2d(PUSH,-42),0)
-                        .splineToConstantHeading(new Vector2d(-10, -55),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -55),0)
-                        .splineToConstantHeading(new Vector2d(-10, -62),3.2)
-                        .splineToConstantHeading(new Vector2d(PUSH, -62),0)
+                        .splineToConstantHeading(new Vector2d(-10, -45),Math.PI)
+                        .splineToConstantHeading(new Vector2d(PUSH,-45),0)
+                        .splineToConstantHeading(new Vector2d(-10, -57),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -57),0)
+                        .splineToConstantHeading(new Vector2d(-10, -64),3.2)
+                        .splineToConstantHeading(new Vector2d(PUSH, -64),0)
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
                         .lineToX(GRAB)
                         .build(),
@@ -124,17 +124,6 @@ public class EfficientAuto extends LinearOpMode {
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
                         .splineToConstantHeading(new Vector2d(CLIP, -6),0)
-                        .build(),
-                clip(),
-                grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -6,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
-                        .lineToX(GRAB)
-                        .build(),grab(),
-                clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -4),0)
                         .build(),
                 clip(),
                 grabPos(),

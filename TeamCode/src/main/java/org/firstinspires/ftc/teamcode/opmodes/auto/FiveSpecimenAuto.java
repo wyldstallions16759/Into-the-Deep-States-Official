@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+// four specimen - uses both preloads, pushes in two
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -10,24 +12,28 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_5_Spliney", group = "bad")
-public class SplineyAutoFive extends LinearOpMode {
+@Autonomous(name = "5_Specimen_Auto", group = "_testing")
+public class FiveSpecimenAuto extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -39;
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
 
+
     public static final double SHIFT = 4;
-    public static final double PUSH_1 = -41-SHIFT;
-    public static final double PUSH_2 = -51-SHIFT;
-    public static final double PUSH_3 = -61-SHIFT;
+    public static final double PUSH_1 = -45+SHIFT;
+    public static final double PUSH_2 = -55+SHIFT;
+    public static final double PUSH_3 = -65+SHIFT;
+
+
 
     private static WristSubsystem28147RR wrist;
     private static ServoPivotSubsystemRR armBase;
@@ -75,14 +81,15 @@ public class SplineyAutoFive extends LinearOpMode {
         armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
         armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
+        MecanumDrive.PARAMS.maxWheelVel = 60;
+        MecanumDrive.PARAMS.maxProfileAccel = 45;
+        MecanumDrive.PARAMS.minProfileAccel = -45;
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
 
-
-
         waitForStart();
 
-        SequentialAction action = new SequentialAction(
+        SequentialAction action =  new SequentialAction(
                 clipPos(),
                 drive.actionBuilder(START_POSE)
                         .splineToConstantHeading(new Vector2d(CLIP,-4),0) // clip preset
@@ -95,32 +102,23 @@ public class SplineyAutoFive extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
                         .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
                         .splineToConstantHeading(new Vector2d(PUSH-4,PUSH_1),0) //push it
+
                         .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_1),0.1)// retreat behind second one
                         .splineToConstantHeading(new Vector2d(-6, PUSH_2),3.4) // get behind second one
                         .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_2),0) // push second one
-                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_2),0.1) // retreat for third push
-                        .splineToConstantHeading(new Vector2d(-6, PUSH_3),3.4) // get behind third
-                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_3),0) // push third.
-                        //.splineToConstantHeading(new Vector2d((PUSH-8)/2,-57),0)
+
+                        .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_2),0.1)// retreat behind third one
+                        .splineToConstantHeading(new Vector2d(-6, PUSH_3),3.4) // get behind third one
+                        .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_3),0) // push third one
+
                         .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
                         .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -12),0)
-                        .build(),
-                clip(),
-                grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -12,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
-//                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
+                        //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
+                        .strafeTo(new Vector2d(CLIP, -10))
                         .build(),
                 clip(),
                 grabPos(),
@@ -132,7 +130,8 @@ public class SplineyAutoFive extends LinearOpMode {
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
+                        .strafeTo(new Vector2d(CLIP, -8))
                         .build(),
                 clip(),
                 grabPos(),
@@ -144,16 +143,34 @@ public class SplineyAutoFive extends LinearOpMode {
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
+//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+                        .strafeTo(new Vector2d(CLIP, -4))
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -6,0))
+                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+                        .strafeTo(new Vector2d(CLIP, -4))
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -4,0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
                         .build()
         );
 
         Actions.runBlocking(action);
+
+        MecanumDrive.PARAMS.maxWheelVel = 50;
+        MecanumDrive.PARAMS.maxProfileAccel = 30;
+        MecanumDrive.PARAMS.minProfileAccel = -30;
     }
 }
