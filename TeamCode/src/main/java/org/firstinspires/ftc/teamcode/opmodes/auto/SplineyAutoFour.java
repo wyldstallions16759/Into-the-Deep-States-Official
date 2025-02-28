@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_4_Spliney")
+@Autonomous(name = "Auto_4_Spliney", group = "_good")
 public class SplineyAutoFour extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double ALMOST_GRAB = -40;

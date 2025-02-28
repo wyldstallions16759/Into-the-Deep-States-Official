@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
-@Autonomous(name = "Auto_4/3spec")
+@Autonomous(name = "Auto_4/3spec", group = "bad")
 public class AutoOpMode extends LinearOpMode {
     public static final double GRAB = -59.5;
     public static final double CLIP = -39;
