@@ -81,9 +81,9 @@ public class FiveSpecimenAuto extends LinearOpMode {
         armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
         armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
-        MecanumDrive.PARAMS.maxWheelVel = 60;
-        MecanumDrive.PARAMS.maxProfileAccel = 45;
-        MecanumDrive.PARAMS.minProfileAccel = -45;
+        MecanumDrive.PARAMS.maxWheelVel = 50;
+        MecanumDrive.PARAMS.maxProfileAccel = 30;
+        MecanumDrive.PARAMS.minProfileAccel = -30;
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
 
@@ -92,12 +92,12 @@ public class FiveSpecimenAuto extends LinearOpMode {
         SequentialAction action =  new SequentialAction(
                 clipPos(),
                 drive.actionBuilder(START_POSE)
-                        .splineToConstantHeading(new Vector2d(CLIP,-4),0) // clip preset
+                        .splineToConstantHeading(new Vector2d(CLIP,-2),0) // clip preset
                         .build(),
-                new SleepAction(0.75), //wait for arm to raise
+                new SleepAction(0.5), //wait for arm to raise
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -4, 0))
+                drive.actionBuilder(new Pose2d(CLIP, -2, 0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
                         .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
@@ -111,53 +111,55 @@ public class FiveSpecimenAuto extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(-6, PUSH_3),3.4) // get behind third one
                         .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_3),0) // push third one
 
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
-                        .lineToX(GRAB)
+                        .splineToConstantHeading(new Vector2d(GRAB,PUSH_3),0) // go to grab first
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+                drive.actionBuilder(new Pose2d(GRAB, PUSH_3, 0))
                         //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
-                        .strafeTo(new Vector2d(CLIP, -10))
+                        .strafeToConstantHeading(new Vector2d(CLIP, -10))
                         .build(),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -10,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+                        .strafeToConstantHeading(new Vector2d(GRAB, -38))
 //                        .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
 //                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
-                        .strafeTo(new Vector2d(CLIP, -8))
+                        .strafeToConstantHeading(new Vector2d(CLIP, -8))
                         .build(),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+                        .strafeToConstantHeading(new Vector2d(GRAB,-38))
 //                        .lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
 //                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
-                        .strafeTo(new Vector2d(CLIP, -4))
+                        .strafeToConstantHeading(new Vector2d(CLIP, -6))
                         .build(),
                 clip(),
                 grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
 //                        .lineToX(GRAB)
+                        .strafeToConstantHeading(new Vector2d(GRAB, -38))
                         .build(),
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
 //                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
-                        .strafeTo(new Vector2d(CLIP, -4))
+                        .strafeToConstantHeading(new Vector2d(CLIP, -4))
                         .build(),
                 clip(),
                 grabPos(),
