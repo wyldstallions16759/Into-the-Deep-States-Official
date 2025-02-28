@@ -110,19 +110,6 @@ public class SplineyAutoFour extends LinearOpMode {
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
                         //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
-                        .strafeTo(new Vector2d(CLIP, -12))
-                        .build(),
-                clip(),
-                grabPos(),
-                drive.actionBuilder(new Pose2d(CLIP, -12,0))
-                        .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
-//                        .lineToX(GRAB)
-                        .build(),
-                grab(),
-                clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
                         .strafeTo(new Vector2d(CLIP, -10))
                         .build(),
                 clip(),
@@ -135,12 +122,25 @@ public class SplineyAutoFour extends LinearOpMode {
                 grab(),
                 clipPos(),
                 drive.actionBuilder(new Pose2d(GRAB, -38, 0))
-//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
                         .strafeTo(new Vector2d(CLIP, -8))
                         .build(),
                 clip(),
                 grabPos(),
                 drive.actionBuilder(new Pose2d(CLIP, -8,0))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB, -38),Math.PI)
+//                        .lineToX(GRAB)
+                        .build(),
+                grab(),
+                clipPos(),
+                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -8),0)
+                        .strafeTo(new Vector2d(CLIP, -6))
+                        .build(),
+                clip(),
+                grabPos(),
+                drive.actionBuilder(new Pose2d(CLIP, -6,0))
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(GRAB, -62),Math.PI+1)
                         .build()

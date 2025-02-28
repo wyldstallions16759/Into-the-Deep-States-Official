@@ -29,9 +29,10 @@ public class MeepMeepTesting {
 
 
 
-    public static final double SHIFT = 6;
-    public static final double PUSH_1 = -38-SHIFT;
-    public static final double PUSH_2 = -48-SHIFT;
+    public static final double SHIFT = 4;
+    public static final double PUSH_1 = -45+SHIFT;
+    public static final double PUSH_2 = -55+SHIFT;
+    public static final double PUSH_3 = -65+SHIFT;
 
     public static Action clip(){
         return new SleepAction(0.25);
@@ -51,7 +52,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 // the robot is about 8.5 inches to center axially, 8.25 inches to center laterally.
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(50, 50, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
         DriveShim drive = myBot.getDrive();
@@ -69,11 +70,14 @@ public class MeepMeepTesting {
                         .splineToConstantHeading(new Vector2d(-30, -35), 0) // go push first one
                         .splineToConstantHeading(new Vector2d(-6, PUSH_1),Math.PI) // get behind first one
                         .splineToConstantHeading(new Vector2d(PUSH-4,PUSH_1),0) //push it
+
                         .splineToConstantHeading(new Vector2d((PUSH-5)/2,PUSH_1),0.1)// retreat behind second one
                         .splineToConstantHeading(new Vector2d(-6, PUSH_2),3.4) // get behind second one
                         .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_2),0) // push second one
-                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0) // go to grab first
-                        .lineToX(GRAB)
+
+                        //.setReversed(true)
+                        .splineToConstantHeading(new Vector2d(GRAB,-38),Math.PI) // go to grab first
+                        //.lineToX(GRAB)
                         .build(),
                 grab(),
                 clipPos(),
