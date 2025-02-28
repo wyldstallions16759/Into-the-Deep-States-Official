@@ -21,10 +21,10 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
 @Autonomous(name = "5_Specimen_Auto", group = "_testing")
 public class FiveSpecimenAuto extends LinearOpMode {
-    public static final double GRAB = -59.5;
+    public static final double GRAB = -61.5;
     public static final double ALMOST_GRAB = -40;
-    public static final double CLIP = -39;
-    public static final double PUSH = -50;
+    public static final double CLIP = -40;
+    public static final double PUSH = -64;
     public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
 
 
@@ -81,9 +81,9 @@ public class FiveSpecimenAuto extends LinearOpMode {
         armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
         armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
-        MecanumDrive.PARAMS.maxWheelVel = 50;
-        MecanumDrive.PARAMS.maxProfileAccel = 30;
-        MecanumDrive.PARAMS.minProfileAccel = -30;
+        MecanumDrive.PARAMS.maxWheelVel = 60;
+        MecanumDrive.PARAMS.maxProfileAccel = 45;
+        MecanumDrive.PARAMS.minProfileAccel = -45;
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
 
