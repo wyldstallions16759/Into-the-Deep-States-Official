@@ -21,12 +21,11 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
-    public static final double GRAB = -59.5;
+    public static final double GRAB = -60.5;
     public static final double ALMOST_GRAB = -40;
-    public static final double CLIP = -39;
-    public static final double PUSH = -50;
-    public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
-
+    public static final double CLIP = -41;
+    public static final double PUSH = -55;
+    public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
 
 
     public static final double SHIFT = 4;
@@ -52,7 +51,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 // the robot is about 8.5 inches to center axially, 8.25 inches to center laterally.
-                .setConstraints(50, 50, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 45, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
         DriveShim drive = myBot.getDrive();

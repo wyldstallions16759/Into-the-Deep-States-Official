@@ -207,7 +207,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
             double opSpeedModifier = 1;
             if (opSlowMode){
-                opSpeedModifier = 0.5;
+                opSpeedModifier = 0.25;
             }
 
             // Horizontal Slides
