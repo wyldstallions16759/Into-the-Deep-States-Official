@@ -120,7 +120,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
             double yaw     =  gamepad1.right_stick_x;
 
             boolean slowDown = gamepad1.right_bumper;
-            boolean opSlowMode = gamepad1.b;
+            boolean opSlowMode = gamepad1.left_bumper;
 
             ///  Standard Mode Operator Controls
 
@@ -312,20 +312,20 @@ public class OfficialTeleop28147 extends LinearOpMode {
             else{ // if transferstate != 0
                 // we can still move both sets of slides. We must be able to move bottom wrist in a toggly fashion.
                 // first, program the transfermode presets
-                if (transferState != previousTransferState){ // if state just changed
+                //if (transferState != previousTransferState){ // if state just changed
                     if (transferState == 1){ // state one - lower arm moves up, top arm moves down but not all the way.
-                        armBase.armToCustom(0.65); // retune upon mechanical adjustments.
-                        horizontalWrist.wrist(1);
+                        armBase.armToCustom(0.6); // retune upon mechanical adjustments.
+                        horizontalWrist.wrist(0);
                         verticalWrist.wrist(-.95);
-                        armWrist.armToCustom(.165);
+                        armWrist.armToCustom(.85);
                         verticalWrist.claw(WristSubsystem28147.ClawState.OPEN);
-                        bottomRoll.armToRest();
-                        horizontalArmPosition = 0;
-                        horizontalWristPosition = 1;
+                        bottomRoll.armToCustom(0.3);
+                        horizontalArmPosition = 0.3;
+                        horizontalWristPosition = 0;
                     }
                     else if (transferState == 2){
                         armBase.armToCustom(.7);
-                        armWrist.armToCustom(.25 );
+                        armWrist.armToCustom(.85 );
                     }
                     else if (transferState == 3){
                         verticalWrist.claw(WristSubsystem28147.ClawState.CLOSED);
@@ -334,7 +334,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
                         horizontalWrist.claw(WristSubsystem28147.ClawState.OPEN);
                         transferState = 0;
                     }
-                }
+               // }
                 previousTransferState = transferState;
 
                 if (transferState == 1){
