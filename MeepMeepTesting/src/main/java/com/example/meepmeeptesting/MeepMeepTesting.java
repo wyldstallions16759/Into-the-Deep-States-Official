@@ -1,5 +1,6 @@
 package com.example.meepmeeptesting;
 
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -23,7 +24,7 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
     public static final double GRAB = -56;
-    public static final double CLIP = -40;
+    public static final double CLIP = -35;
     public static final double REAL_CLIP = -33;
     public static final Pose2d START_POSE = new Pose2d(-63,-6, -Math.PI);
     public static Action clip(){
@@ -52,9 +53,19 @@ public class MeepMeepTesting {
 
                 ),
                 new ParallelAction(
-                        drive.actionBuilder(new Pose2d(REAL_CLIP, -6, 0))
+                        drive.actionBuilder(new Pose2d(REAL_CLIP, -8, Math.PI))
                                 .setReversed(true)
-                                .splineToConstantHeading(new Vector2d(-30, -20), 0)
+                                .splineToConstantHeading(new Vector2d(-35, -33), 0)
+                                .splineToConstantHeading(new Vector2d(-10, -33),Math.PI)
+                                .setReversed(false)
+                                .splineToConstantHeading(new Vector2d(-10,-45),3*Math.PI/2)
+                                .setReversed(true)
+                                .splineToConstantHeading(new Vector2d(-50,-45),0)
+                                .splineToConstantHeading(new Vector2d(-10,-45),Math.PI)
+                                .setReversed(false)
+                                .splineToConstantHeading(new Vector2d(-10,-54),3*Math.PI/2)
+                                .setReversed(true)
+                                .splineToConstantHeading(new Vector2d(-50,-54),0)
                                 .build()
         )));
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))

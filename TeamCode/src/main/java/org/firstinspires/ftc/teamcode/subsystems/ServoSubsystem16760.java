@@ -46,8 +46,8 @@ public class ServoSubsystem16760 {
 
     public void toGround(boolean go){
         if (go) {
-            IntakeElevationA.setPosition(0.25);
-            IntakeElevationB.setPosition(0.25);
+            IntakeElevationA.setPosition(0.23);
+            IntakeElevationB.setPosition(0.23);
         } else {
             IntakeElevationA.setPosition(0);
             IntakeElevationB.setPosition(0);
@@ -73,7 +73,7 @@ public class ServoSubsystem16760 {
         if (close) {
             Claw.setPosition(0);
         } else {
-            Claw.setPosition(0.2);
+            Claw.setPosition(0.3);
         }
     }
     public void runIntake(double speed,boolean out) {

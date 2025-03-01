@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystem;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="XT1-", group="Linear OpMode")
+@TeleOp(name = "XT1-", group = "Linear OpMode")
 //@Disabled
 public class XT1 extends LinearOpMode {
 
@@ -71,9 +71,15 @@ public class XT1 extends LinearOpMode {
     private PinpointDrive drive;
     private ArmSubsystem arm;
 
+    enum Transfer {
+        FIRST,
+        SECOND,
+        THIRD
+    }
 
-//    //private Servo LeftFinger = null;
-//    private Servo RightFinger = null;
+
+    //    //private Servo LeftFinger = null;
+    //    private Servo RightFinger = null;
 
     //declare subsystems:
 
@@ -96,7 +102,7 @@ public class XT1 extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
+        drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 
         SlidePairSubsystem Elevation = new SlidePairSubsystem(hardwareMap,
@@ -109,15 +115,15 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
                 4000, 4000,
                 DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE,
                 5);
-        ServoSubsystem16760 Servo = new ServoSubsystem16760(hardwareMap,telemetry);
+        ServoSubsystem16760 Servo = new ServoSubsystem16760(hardwareMap, telemetry);
         //rr
-//        arm = new ArmSubsystem(hardwareMap,telemetry);
-//        //LeftFinger = hardwareMap.get(Servo.class, "LeftFinger");
-//        RightFinger= hardwareMap.get(Servo.class, "RightFinger");
+        //        arm = new ArmSubsystem(hardwareMap,telemetry);
+        //        //LeftFinger = hardwareMap.get(Servo.class, "LeftFinger");
+        //        RightFinger= hardwareMap.get(Servo.class, "RightFinger");
         // create subsystems
 
-//        ArmSubsystem arm = new ArmSubsystem(hardwareMap,telemetry);
-//        wristSubsystem = new WristSubsystem(hardwareMap, telemetry);
+        //        ArmSubsystem arm = new ArmSubsystem(hardwareMap,telemetry);
+        //        wristSubsystem = new WristSubsystem(hardwareMap, telemetry);
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -129,17 +135,17 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
-//        ElevatorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////        RightFinger.scaleRange(0.4,0.7);
-//        ElevatorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//        ElevatorA.setDirection(DcMotor.Direction.REVERSE);
-//        ElevatorB.setDirection(DcMotor.Direction.FORWARD);
-////        RightFinger.setDirection(Servo.Direction.FORWARD);
-//        ElevatorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        ElevatorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //        ElevatorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //        ElevatorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ////        RightFinger.scaleRange(0.4,0.7);
+        //        ElevatorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //        ElevatorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //
+        //        ElevatorA.setDirection(DcMotor.Direction.REVERSE);
+        //        ElevatorB.setDirection(DcMotor.Direction.FORWARD);
+        ////        RightFinger.setDirection(Servo.Direction.FORWARD);
+        //        ElevatorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //        ElevatorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -150,22 +156,26 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
         waitForStart();
         runtime.reset();
         double position = 0;
+        boolean pastReady = false;
+        boolean firstReset = true;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = gamepad1.left_stick_y;
+            double lateral = -gamepad1.left_stick_x;
+            double yaw = -gamepad1.right_stick_x;
             float up = gamepad2.left_stick_y;
             float out = gamepad2.right_stick_y;
             boolean claw_open = gamepad2.dpad_up;
             boolean claw0_close = gamepad2.dpad_down;
             boolean toSub = gamepad2.y;
             boolean toGround = gamepad2.a;
+            boolean brake = gamepad1.b;
+            boolean dpad_left = gamepad2.dpad_left;
             boolean release_slightly_claw = gamepad2.left_bumper;
-            boolean slow_the_flip_down = gamepad1.right_bumper;
+            boolean slow_the_flip_down = gamepad1.a;
             float intakeIn = gamepad2.left_trigger;
             float intakeOut = gamepad2.right_trigger;
             boolean sampleReady = gamepad2.right_bumper;
@@ -179,12 +189,13 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
             double dumb = 13.9;
             int wallReadyCounter = 1;
             int clawToggleCounter = 1;
-            int sampleReadyCounter = 1;
+            int sampleReadyCounter = 0;
             int toSubCounter = 1;
+
             double ElevAPos = Elevation.getAPosition();
             double ElevBPos = Elevation.getBPosition();
             double combinedPos = ElevAPos + ElevBPos;
-//            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
+            //            double RobotTipAngle = imu.getRobotYawPitchRollAngles().getPitch();
 
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -207,9 +218,21 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
             if (slow_the_flip_down) {
                 max *= 5;
             }
+            if (brake) {
+                leftFrontDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+            } else {
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
 
-
-            if (up > 0.05) {
+            }
+            if (dpad_left) {
+                Elevation.slideTo(0.2);
+            } else if (up > 0.05) {
                 Elevation.setPower(-up);
             } else if (up < -0.05) {
                 Elevation.setPower(-up);
@@ -223,143 +246,149 @@ drive = new PinpointDrive(hardwareMap,new Pose2d(0,0,0));
             } else {
                 Extension.setPower(0);
             }
-                if (max > 1.0) {
-                    leftFrontPower /= max;
-                    rightFrontPower /= max;
-                    leftBackPower /= max;
-                    rightBackPower /= max;
-                }
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
 
-                if (wallReady) {
-                    wallReadyCounter += 1;
-                }
-                if (sampleReady) {
-                    sampleReadyCounter += 1;
-                }
-                if (claw0_close) {
-                    Servo.closeClaw(true);
-                }
+            if (wallReady) {
+                wallReadyCounter += 1;
+            }
+            if (sampleReady && !pastReady) {
+                sampleReadyCounter += 1;
+            }
+            if (claw0_close) {
+                Servo.closeClaw(true);
+            }
             if (claw_open) {
                 Servo.closeClaw(false);
             }
-                if (sampleReady) {
-                    Servo.movePendulum(0.05);
-                    Servo.setWrist(true);
-                    Servo.closeClaw(true);
-                    sleep(400);
-                    Servo.moveIntake(0.13);
-                    sleep(500);
-                    Servo.closeClaw(false);
-                    sleep(100);
-                } else if (wallReady) {
-                    Servo.movePendulum(0.5);
-                    sleep(600);
-                    Servo.setWrist(false);
-                    sleep(300);
-                    Servo.movePendulum(0);;
-                } else if (specimenReady) {
-                    Servo.movePendulum(0.7);
-                    sleep(300);
-                    Servo.setWrist(true);
-                    Servo.closeClaw(false);
-                    sleep(900);
-                    Servo.closeClaw(true);
-                    sleep(300);
-                } else {
-                    Servo.movePendulum(0);
-
-                }
-
-                if (toSub) {
-                    toSubCounter += 1;
-                }
-                if (toSubCounter % 2 == 0) {
-                    position = 0.2;
-                }
-
-
-                position = Math.min(Math.max(position, 0), 1);
-
-
-                // This is test code:
-                //
-                // Uncomment the following code to test your motor directions.
-                // Each button should make the corresponding motor run FORWARD.
-                //   1) First get all the motors to take to correct positions on the robot
-                //      by adjusting your Robot Configuration if necessary.
-                //   2) Then make sure they run in the correct direction by modifying the
-                //      the setDirection() calls above.
-                // Once the correct motors move in the correct direction re-comment this code.
-
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
-//            if (toSub) {
-//                Elevation.slideTo(0.3);
-//            }
-
-                // Send calculated power to wheels
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-
-                if (intakeOut > 0.05) {
-                    Servo.runIntake(intakeIn,false);
-                } else {
-                    Servo.runIntake(intakeIn,false);
-                }
-                if (intakeIn > 0.05) {
-                    IntakeA.setPosition(1);
-                    IntakeB.setPosition(1);
-                } else if (intakeOut > 0.05){
-                    IntakeA.setPosition(0);
-                    IntakeB.setPosition(0);
-                } else {
-                    IntakeA.setPosition(0.5);
-                    IntakeB.setPosition(0.5);
-                }
-//            if (toSub && !firstTime) {
-//
-//                firstTime = Elevation.slideTo(0.3);
-//            } else {
-//                firstTime = true;
-//            }
-
-                // Wrist Subsystem calls:
-//            if (SUB) {
-//                SUBMERSIBLE = new Pose2D(DistanceUnit.INCH,-29 ,dumb += 2,AngleUnit.DEGREES,0);
-//                pinpoint.driveTo(SUBMERSIBLE,0.3,0);
-//            } else {
-//                leftFrontDrive.setPower(0);
-//                rightFrontDrive.setPower(0);
-//                leftBackDrive.setPower(0);
-//                rightBackDrive.setPower(0);
-//            }
-//            if (OZ) {
-//                pinpoint.driveTo(OBSERVATION,0.3,0);
-//            } else {
-//                leftFrontDrive.setPower(0);
-//                rightFrontDrive.setPower(0);
-//                leftBackDrive.setPower(0);
-//                rightBackDrive.setPower(0);
-//            }
-
-                // Show the elapsed game time and wheel power.
-//            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
-//            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
-//            telemetry.addData("CombinedPos",combinedPos);
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("gobilda", drive.pinpoint.getPositionRR());
-                telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-                telemetry.update();
+            if (sampleReadyCounter == 1) {
+                Servo.setWrist(true);
+                Servo.closeClaw(true);
+                Servo.moveIntake(0.13);
+                sampleReadyCounter = 2;
+            } else if (sampleReadyCounter == 2) {
+                Servo.movePendulum(0.05);
+                sampleReadyCounter = 3;
+            } else if (sampleReadyCounter == 3) {
+                Servo.closeClaw(false);
+                sampleReadyCounter = 0;
             }
-//l
+
+
+        if (wallReady) {
+            Servo.movePendulum(0.5);
+            sleep(600);
+            Servo.setWrist(false);
+            sleep(300);
+            Servo.movePendulum(0);
+            ;
+        } else if (specimenReady) {
+            Servo.movePendulum(0.7);
+            sleep(300);
+            Servo.setWrist(true);
+            Servo.closeClaw(false);
+            sleep(900);
+            Servo.closeClaw(true);
+            sleep(300);
+        } else {
+            Servo.movePendulum(0);
+
         }
 
+        if (toSub) {
+            toSubCounter += 1;
+        }
+        if (toSubCounter % 2 == 0) {
+            position = 0.2;
+        }
+
+
+        position = Math.min(Math.max(position, 0), 1);
+
+
+        // This is test code:
+        //
+        // Uncomment the following code to test your motor directions.
+        // Each button should make the corresponding motor run FORWARD.
+        //   1) First get all the motors to take to correct positions on the robot
+        //      by adjusting your Robot Configuration if necessary.
+        //   2) Then make sure they run in the correct direction by modifying the
+        //      the setDirection() calls above.
+        // Once the correct motors move in the correct direction re-comment this code.
+
+
+                /*
+                leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+                leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+                rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+                rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+                */
+        //            if (toSub) {
+        //                Elevation.slideTo(0.3);
+        //            }
+
+        // Send calculated power to wheels
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+
+        if (intakeOut > 0.05) {
+            Servo.runIntake(intakeIn, false);
+        } else {
+            Servo.runIntake(intakeIn, false);
+        }
+        if (intakeIn > 0.05) {
+            IntakeA.setPosition(1);
+            IntakeB.setPosition(1);
+        } else if (intakeOut > 0.05) {
+            IntakeA.setPosition(0);
+            IntakeB.setPosition(0);
+        } else {
+            IntakeA.setPosition(0.5);
+            IntakeB.setPosition(0.5);
+        }
+        //            if (toSub && !firstTime) {
+        //
+        //                firstTime = Elevation.slideTo(0.3);
+        //            } else {
+        //                firstTime = true;
+        //            }
+
+        // Wrist Subsystem calls:
+        //            if (SUB) {
+        //                SUBMERSIBLE = new Pose2D(DistanceUnit.INCH,-29 ,dumb += 2,AngleUnit.DEGREES,0);
+        //                pinpoint.driveTo(SUBMERSIBLE,0.3,0);
+        //            } else {
+        //                leftFrontDrive.setPower(0);
+        //                rightFrontDrive.setPower(0);
+        //                leftBackDrive.setPower(0);
+        //                rightBackDrive.setPower(0);
+        //            }
+        //            if (OZ) {
+        //                pinpoint.driveTo(OBSERVATION,0.3,0);
+        //            } else {
+        //                leftFrontDrive.setPower(0);
+        //                rightFrontDrive.setPower(0);
+        //                leftBackDrive.setPower(0);
+        //                rightBackDrive.setPower(0);
+        //            }
+        pastReady = sampleReady;
+        // Show the elapsed game time and wheel power.
+        //            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
+        //            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
+        //            telemetry.addData("CombinedPos",combinedPos);
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("gobilda", drive.pinpoint.getPositionRR());
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+        telemetry.update();
     }
+    //l
+}
+
+        }

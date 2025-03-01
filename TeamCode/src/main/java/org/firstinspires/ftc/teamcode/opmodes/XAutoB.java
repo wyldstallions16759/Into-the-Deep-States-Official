@@ -1,88 +1,142 @@
-package org.firstinspires.ftc.teamcode.opmodes;
-
-import static org.firstinspires.ftc.teamcode.tuning.ManualFeedbackTuner.DISTANCE;
-
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.teamcode.subsystems.ServoSubsystem16760RR;
-import org.firstinspires.ftc.teamcode.subsystems.SlidePairSubsystemRR;
-
-@Autonomous(name = "Specimen AutoB")
-public class XAutoB extends LinearOpMode {
-    public static final double GRAB = -56;
-    public static final double CLIP = 29;
-    public static final Pose2d START_POSE = new Pose2d(0,0, 0);
-    public static Action clip(){
-        return new SleepAction(100);
-    }
-    public static Action grab(){
-        return clip();
-    }
-    @Override
-    public void runOpMode(){
-        // Steps:
-        //      1. Initialize Subsystems required:
-        //          a. arm base servo
-        //          b. arm wrist servo
-        //          c. vertical claw
-        //          d. roadrunner
-        //      2. Create path
-        //      3. Run Actions Blocking
-
-        Pose2d beginPose = new Pose2d(0, 0, Math.PI);
-
-        PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
-        ServoSubsystem16760RR servo = new ServoSubsystem16760RR(hardwareMap,telemetry);
-        SlidePairSubsystemRR Elevation = new SlidePairSubsystemRR(hardwareMap,
-                "ElevatorA", "ElevatorB",
-                3284, 3339,
-                DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD,
-                20);
-
-        waitForStart();
-
-        Actions.runBlocking(new SequentialAction(
-                new ParallelAction(
-                        drive.actionBuilder(new Pose2d(0, 0, 0))
-                                .lineToX(28)
-                                .build(),
-                servo.closeClaw(false),
-                servo.movePendulum(0),
-                servo.setWrist(false),
-                servo.moveIntake(0.1),
-                Elevation.SlideToTargetAction(0.6)
-                        ),
-                Elevation.SlideToTargetAction(0.5),
-                new ParallelAction(
-                        Elevation.SlideToTargetAction(0.3),
-                        drive.actionBuilder(new Pose2d(28, 0, 0))
-                                .setReversed(false)
-                                .splineToLinearHeading(new Pose2d(10,-20,0),0)
-                                .lineToX(40)
-                                .splineToLinearHeading(new Pose2d(50,-35,Math.PI),0)
-                                .build(),
-                        servo.closeClaw(true)
-                ),
-                drive.actionBuilder(new Pose2d(50, -35, Math.PI))
-                        .lineToX(15,drive.defaultVelConstraint)
-                        .lineToX(50,drive.defaultVelConstraint)
-                        .setTangent(Math.PI/2)
-                        .lineToY(-36)
-                        .setTangent(0)
-                        .lineToX(15,drive.defaultVelConstraint)
-                        .lineToX(50,drive.defaultVelConstraint)
-                        .build()
-        ));
-
-    }
-}
+//package org.firstinspires.ftc.teamcode.opmodes.auto;
+//// leave a preset for alliance member?
+//import com.acmerobotics.roadrunner.Action;
+//import com.acmerobotics.roadrunner.ParallelAction;
+//import com.acmerobotics.roadrunner.Pose2d;
+//import com.acmerobotics.roadrunner.SequentialAction;
+//import com.acmerobotics.roadrunner.SleepAction;
+//import com.acmerobotics.roadrunner.Vector2d;
+//import com.acmerobotics.roadrunner.ftc.Actions;
+//import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//
+//import org.firstinspires.ftc.teamcode.PinpointDrive;
+//import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.ServoPivotSubsystemRR;
+//import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147;
+//import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
+//
+//@Autonomous(name = "Auto_4spec")
+//public class FourSpecimen extends LinearOpMode {
+//    public static final double GRAB = -59.5;
+//    public static final double ALMOST_GRAB = -40;
+//    public static final double CLIP = -39;
+//    public static final double PUSH = -50;
+//    public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
+//
+//    private static WristSubsystem28147RR wrist;
+//    private static ServoPivotSubsystemRR armBase;
+//    private static ServoPivotSubsystemRR armWrist;
+//
+//    public static Action clipPos(){
+//        return new SequentialAction(
+//                armBase.armToRestAction(),
+//                armWrist.armToRestAction(),
+//                wrist.wrist(1)
+//        );
+//    }
+//    public static Action grabPos(){
+//        return new SequentialAction(
+//                armBase.armToRaisedAction(),
+//                armWrist.armToRaisedAction(),
+//                wrist.wrist(-1),
+//                wrist.clawToAction(WristSubsystem28147.ClawState.OPEN));
+//    }
+//
+//    public static Action clip(){
+//        return new ParallelAction(
+//                new SleepAction(0.25),
+//                armWrist.armToCustomAction(0),
+//                new SleepAction(0.5));
+//    }
+//
+//    public static Action grab(){
+//        return new ParallelAction(
+//                wrist.clawToAction(WristSubsystem28147.ClawState.CLOSED), // close to grab
+//                new SleepAction(0.5));
+//    }
+//    @Override
+//    public void runOpMode(){
+//        // Steps:
+//        //      1. Initialize Subsystems required:
+//        //          a. arm base servo
+//        //          b. arm wrist servo
+//        //          c. vertical claw
+//        //          d. roadrunner
+//        //      2. Create path
+//        //      3. Run Actions Blocking
+//        wrist = new WristSubsystem28147RR(hardwareMap, telemetry,
+//                "topclawwrist", "topclaw");
+//        armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
+//        armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
+//
+//
+//        PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
+//
+//
+//
+//        waitForStart();
+//
+//        SequentialAction action = new SequentialAction(
+//                clipPos(),
+//                drive.actionBuilder(START_POSE)
+//                        .lineToX(CLIP)
+//                        .build(),
+//                new SleepAction(0.75),
+//                clip(),
+//                grabPos(),
+//                drive.actionBuilder(new Pose2d(CLIP, -8, 0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(-30, -35), 0)
+//                        .splineToConstantHeading(new Vector2d(-10, -45),Math.PI)
+//                        .splineToConstantHeading(new Vector2d(PUSH,-45),0)
+//                        .splineToConstantHeading(new Vector2d(-10, -57),3.2)
+//                        .splineToConstantHeading(new Vector2d(PUSH, -57),0)
+//                        .splineToConstantHeading(new Vector2d(-10, -64),3.2)
+//                        .splineToConstantHeading(new Vector2d(PUSH, -64),0)
+//                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
+//                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                clipPos(),
+//                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -12),0)
+//                        .build(),
+//                clip(),
+//                grabPos(),
+//                drive.actionBuilder(new Pose2d(CLIP, -12,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+//                        .lineToX(GRAB)
+//                        .build(),
+//                grab(),
+//                clipPos(),
+//                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -10),0)
+//                        .build(),
+//                clip(),
+//                grabPos(),
+//                drive.actionBuilder(new Pose2d(CLIP, -10,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB, -38),0)
+//                        .lineToX(GRAB)
+//                        .build(),grab(),
+//                clipPos(),
+//                drive.actionBuilder(new Pose2d(GRAB, -38, 0))
+//                        .splineToConstantHeading(new Vector2d(CLIP, -6),0)
+//                        .build(),
+//                clip(),
+//                grabPos(),
+//                drive.actionBuilder(new Pose2d(CLIP, -4,0))
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(GRAB, -38),0)
+//                        .build()
+//        );
+//
+//        SequentialAction testArmAction = new SequentialAction(
+//                grab()
+//        );
+//
+//        Actions.runBlocking(action);
+//    }
+//}
