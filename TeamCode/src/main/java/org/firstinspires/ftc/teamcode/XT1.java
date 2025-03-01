@@ -71,13 +71,6 @@ public class XT1 extends LinearOpMode {
     private PinpointDrive drive;
     private ArmSubsystem arm;
 
-    enum Transfer {
-        FIRST,
-        SECOND,
-        THIRD
-    }
-
-
     //    //private Servo LeftFinger = null;
     //    private Servo RightFinger = null;
 
@@ -157,7 +150,8 @@ public class XT1 extends LinearOpMode {
         runtime.reset();
         double position = 0;
         boolean pastReady = false;
-        boolean firstReset = true;
+        int transferState = 0;
+        int previousTransferState = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -257,7 +251,7 @@ public class XT1 extends LinearOpMode {
                 wallReadyCounter += 1;
             }
             if (sampleReady && !pastReady) {
-                sampleReadyCounter += 1;
+                sampleReadyCounter++;
             }
             if (claw0_close) {
                 Servo.closeClaw(true);
@@ -265,21 +259,20 @@ public class XT1 extends LinearOpMode {
             if (claw_open) {
                 Servo.closeClaw(false);
             }
+
+
             if (sampleReadyCounter == 1) {
                 Servo.setWrist(true);
                 Servo.closeClaw(true);
                 Servo.moveIntake(0.13);
-                sampleReadyCounter = 2;
             } else if (sampleReadyCounter == 2) {
                 Servo.movePendulum(0.05);
-                sampleReadyCounter = 3;
             } else if (sampleReadyCounter == 3) {
                 Servo.closeClaw(false);
                 sampleReadyCounter = 0;
             }
 
-
-        if (wallReady) {
+            if (wallReady) {
             Servo.movePendulum(0.5);
             sleep(600);
             Servo.setWrist(false);
