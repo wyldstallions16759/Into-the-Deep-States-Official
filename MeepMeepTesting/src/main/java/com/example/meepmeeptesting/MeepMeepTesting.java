@@ -26,7 +26,7 @@ public class MeepMeepTesting {
     public static final double GRAB = -56;
     public static final double CLIP = -35;
     public static final double REAL_CLIP = -33;
-    public static final Pose2d START_POSE = new Pose2d(-63,-6, -Math.PI);
+    public static final Pose2d START_POSE = new Pose2d(-63,-9, -Math.PI);
     public static Action clip(){
         return new SleepAction(1);
     }
@@ -53,19 +53,31 @@ public class MeepMeepTesting {
 
                 ),
                 new ParallelAction(
-                        drive.actionBuilder(new Pose2d(REAL_CLIP, -8, Math.PI))
+                        drive.actionBuilder(new Pose2d(REAL_CLIP, -9, Math.PI))
+                                .lineToX(-40)
                                 .setReversed(true)
                                 .splineToConstantHeading(new Vector2d(-35, -33), 0)
-                                .splineToConstantHeading(new Vector2d(-10, -33),Math.PI)
+                                .splineToConstantHeading(new Vector2d(-13, -33),Math.PI)
                                 .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(-10,-45),3*Math.PI/2)
+                                .splineToConstantHeading(new Vector2d(-13,-45),3*Math.PI/2)
                                 .setReversed(true)
-                                .splineToConstantHeading(new Vector2d(-50,-45),0)
-                                .splineToConstantHeading(new Vector2d(-10,-45),Math.PI)
+                                .splineToConstantHeading(new Vector2d(-60,-45),0)
+                                .splineToConstantHeading(new Vector2d(-13,-45),Math.PI)
                                 .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(-10,-54),3*Math.PI/2)
+                                .splineToConstantHeading(new Vector2d(-13,-52),3*Math.PI/2)
                                 .setReversed(true)
-                                .splineToConstantHeading(new Vector2d(-50,-54),0)
+                                .splineToConstantHeading(new Vector2d(-60,-52),0)
+                                .splineToConstantHeading(new Vector2d(-13,-52),Math.PI)
+                                .setReversed(true)
+                                .splineToConstantHeading(new Vector2d(-15,-60),3*Math.PI/2)
+                                .setReversed(true)
+                                .splineToConstantHeading(new Vector2d(-60,-60),0)
+                                .setReversed(true)
+                                .splineToConstantHeading(new Vector2d(-50,-45),1)
+                                .strafeTo(new Vector2d(-60,-45))
+                                .build(),
+                        drive.actionBuilder(new Pose2d(-60, -45, 0))
+                                .strafeTo(new Vector2d(CLIP,-9))
                                 .build()
         )));
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))

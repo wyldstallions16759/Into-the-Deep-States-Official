@@ -23,6 +23,7 @@ public class AutoA extends LinearOpMode {
         public static final double ALMOST_GRAB = -40;
     public static final double CLIP = -34;
     public static final double PUSH = -50;
+    public static final double WALLHEIGHT = 0.35;
     public static final Pose2d START_POSE = new Pose2d(-63,-8, 0);
     public static Action clip(){
         return new SleepAction(1);
@@ -64,35 +65,48 @@ public class AutoA extends LinearOpMode {
                                 .lineToX(CLIP)
                                 .build()
                 ),
-                Elevation.SlideToTargetAction(0.57),
                 servo.closeClaw(true),
+                new ParallelAction(
+                        Elevation.SlideToTargetAction(WALLHEIGHT),
                 drive.actionBuilder(new Pose2d(CLIP, -8, 0))
+                        .lineToX(-40)
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(-35, -33), 0)
-                        .splineToConstantHeading(new Vector2d(-10, -33),Math.PI)
+                        .splineToConstantHeading(new Vector2d(-13, -33),Math.PI)
                         .setReversed(false)
-                        .splineToConstantHeading(new Vector2d(-10,-45),3*Math.PI/2)
+                        .splineToConstantHeading(new Vector2d(-13,-45),3*Math.PI/2)
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(PUSH,-45),0)
-                        .splineToConstantHeading(new Vector2d(-10,-45),Math.PI)
+                        .splineToConstantHeading(new Vector2d(-50,-45),0)
+                        .strafeTo(new Vector2d(-60,-45))
+                        .splineToConstantHeading(new Vector2d(-13,-45),Math.PI)
                         .setReversed(false)
-                        .splineToConstantHeading(new Vector2d(-10,-52),3*Math.PI/2)
+                        .splineToConstantHeading(new Vector2d(-13,-52),3*Math.PI/2)
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(PUSH,-52),0)
-//                        .splineToConstantHeading(new Vector2d(-10, -57),3.2)
-//                        .splineToConstantHeading(new Vector2d(PUSH, -57),0)
-//                        .splineToConstantHeading(new Vector2d(-10, -64),3.2)
-//                        .splineToConstantHeading(new Vector2d(PUSH, -64),0)
-//                        .splineToConstantHeading(new Vector2d(ALMOST_GRAB,-38),0)
-//                        .lineToX(GRAB)
+                        .splineToConstantHeading(new Vector2d(-50,-52),0)
+                        .strafeTo(new Vector2d(-60,-52))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-50,-45),1)
+                        .strafeTo(new Vector2d(-60,-45))
                         .build()
-//                servo.closeClaw(false),
-//                new ParallelAction(
-//                drive.actionBuilder(new Pose2d(CLIP, -6, Math.PI))
-//                        .turnTo(0)
-//                        .build(),
-//                        Elevation.SlideToTargetAction(0.5)
-//                        ),
+                        ),
+                drive.actionBuilder(new Pose2d(-60,-45,0))
+                        .turnTo(Math.PI)
+                        .build(),
+                servo.closeClaw(false),
+                drive.actionBuilder(new Pose2d(-60,-45,Math.PI))
+                        .turnTo(0)
+                        .build(),
+
+
+                new ParallelAction(
+                        Elevation.SlideToTargetAction(0.8),
+                drive.actionBuilder(new Pose2d(-60, -45, 0))
+                        .strafeTo(new Vector2d(CLIP,-9))
+                        .build()
+                        ),
+                Elevation.SlideToTargetAction(0.57),
+                servo.closeClaw(true)
+
 //                drive.actionBuilder(new Pose2d(GRAB, -45, 0))
 //                        .splineToConstantHeading(new Vector2d(CLIP, -3), 0)
 //                        .build(),

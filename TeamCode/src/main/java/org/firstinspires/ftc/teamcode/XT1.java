@@ -225,7 +225,7 @@ public class XT1 extends LinearOpMode {
 
             }
             if (dpad_left) {
-                Elevation.slideTo(0.2);
+                Elevation.slideTo(0.35);
             } else if (up > 0.05) {
                 Elevation.setPower(-up);
             } else if (up < -0.05) {
