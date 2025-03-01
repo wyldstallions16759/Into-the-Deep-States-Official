@@ -150,6 +150,7 @@ public class XT1 extends LinearOpMode {
         runtime.reset();
         double position = 0;
         boolean pastReady = false;
+        int sampleReadyCounter = 0;
         int transferState = 0;
         int previousTransferState = 0;
         // run until the end of the match (driver presses STOP)
@@ -183,7 +184,6 @@ public class XT1 extends LinearOpMode {
             double dumb = 13.9;
             int wallReadyCounter = 1;
             int clawToggleCounter = 1;
-            int sampleReadyCounter = 0;
             int toSubCounter = 1;
 
             double ElevAPos = Elevation.getAPosition();
@@ -206,7 +206,7 @@ public class XT1 extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
             if (toGround) {
                 Servo.toGround(true);
-            } else {
+            } else if (sampleReadyCounter == 0){
                 Servo.toGround(false);
             }
             if (slow_the_flip_down) {
@@ -251,7 +251,11 @@ public class XT1 extends LinearOpMode {
                 wallReadyCounter += 1;
             }
             if (sampleReady && !pastReady) {
-                sampleReadyCounter++;
+                if (sampleReadyCounter == 4){
+                    sampleReadyCounter = 0;
+                } else {
+                    sampleReadyCounter++;
+                }
             }
             if (claw0_close) {
                 Servo.closeClaw(true);
@@ -261,15 +265,15 @@ public class XT1 extends LinearOpMode {
             }
 
 
-            if (sampleReadyCounter == 1) {
+            if (sampleReadyCounter == 1 && previousTransferState != 1) {
                 Servo.setWrist(true);
                 Servo.closeClaw(true);
                 Servo.moveIntake(0.13);
-            } else if (sampleReadyCounter == 2) {
+            } else if (sampleReadyCounter == 2 && previousTransferState != 2) {
                 Servo.movePendulum(0.05);
-            } else if (sampleReadyCounter == 3) {
+            } else if (sampleReadyCounter == 3 && previousTransferState != 3) {
                 Servo.closeClaw(false);
-                sampleReadyCounter = 0;
+                sampleReadyCounter = 4;
             }
 
             if (wallReady) {
@@ -287,7 +291,9 @@ public class XT1 extends LinearOpMode {
             sleep(900);
             Servo.closeClaw(true);
             sleep(300);
-        } else {
+        } else if (sampleReadyCounter != 0) {
+
+            } else{
             Servo.movePendulum(0);
 
         }
@@ -371,6 +377,7 @@ public class XT1 extends LinearOpMode {
         //                rightBackDrive.setPower(0);
         //            }
         pastReady = sampleReady;
+        previousTransferState = sampleReadyCounter;
         // Show the elapsed game time and wheel power.
         //            telemetry.addData("ElevatorA",ElevatorA.getCurrentPosition());
         //            telemetry.addData("ElevatorB",ElevatorB.getCurrentPosition());
@@ -379,6 +386,8 @@ public class XT1 extends LinearOpMode {
         telemetry.addData("gobilda", drive.pinpoint.getPositionRR());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+        telemetry.addData("SampleCounter", sampleReadyCounter);
+        telemetry.addData("SampleReady", sampleReady);
         telemetry.update();
     }
     //l
