@@ -11,17 +11,17 @@ public class ServoPivotSubsystem {
         HORIZONTAL_EXTENSION_JOINT
     }
 
-    public static final double VERTICAL_EXTENSION_ARM_ROTATION = 0;
+    public static final double VERTICAL_EXTENSION_ARM_ROTATION = .5;
     public static final double HORIZONTAL_EXTENSION_JOIN_ROTATION = 0;
     public static final double VERTICAL_EXTENSION_BASE_ROTATION = 0;//0.44;
 
     public static final double RESTING_PRESET_HORIZ = 0;
     public static final double RESTING_PRESET_VERT_BASE = 0.475;
-    public static final double RESTING_PRESET_VERT = 0.22;
+    public static final double RESTING_PRESET_VERT = 0.19;
 
     public static final double RAISED_PRESET_HORIZ = 1;
     public static final double RAISED_PRESET_VERT_BASE = 1;
-    public static final double RAISED_PRESET_VERT = .25;
+    public static final double RAISED_PRESET_VERT = .13;
 
 
     private Servo leftServo;

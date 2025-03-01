@@ -307,6 +307,7 @@ public class OfficialTeleop28147 extends LinearOpMode {
 
                 if (manualOverrideArmWrist) {
                     armWrist.armToCustom((manualArmWristPos + 1) / 2);
+                    telemetry.addData("manual arm wrist pos",(manualArmWristPos+1)/2);
                 }
             }
             else{ // if transferstate != 0

@@ -51,7 +51,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 // the robot is about 8.5 inches to center axially, 8.25 inches to center laterally.
-                .setConstraints(60, 45, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(50, 50, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
         DriveShim drive = myBot.getDrive();
@@ -78,11 +78,11 @@ public class MeepMeepTesting {
                         .splineToConstantHeading(new Vector2d(-6, PUSH_3),3.4) // get behind third one
                         .splineToConstantHeading(new Vector2d(PUSH-4, PUSH_3),0) // push third one
 
-                        .splineToConstantHeading(new Vector2d(GRAB,PUSH_3),0) // go to grab first
+                        .splineToConstantHeading(new Vector2d(GRAB,PUSH_3+6),1) // go to grab first
                         .build(),
                 grab(),
                 clipPos(),
-                drive.actionBuilder(new Pose2d(GRAB, PUSH_3, 0))
+                drive.actionBuilder(new Pose2d(GRAB, PUSH_3+6, 0))
                         //.splineToConstantHeading(new Vector2d(CLIP, -12),0)
                         .strafeToConstantHeading(new Vector2d(CLIP, -10))
                         .build(),

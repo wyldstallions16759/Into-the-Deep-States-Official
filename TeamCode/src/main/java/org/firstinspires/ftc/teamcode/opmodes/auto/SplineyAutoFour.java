@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem28147RR;
 
 @Autonomous(name = "Auto_4_Spliney", group = "_good")
 public class SplineyAutoFour extends LinearOpMode {
-    public static final double GRAB = -61.5;
+    public static final double GRAB = -60.5;
     public static final double ALMOST_GRAB = -40;
-    public static final double CLIP = -40;//changed
+    public static final double CLIP = -41;//changed to 41 was 40.
     public static final double PUSH = -50;
     public static final Pose2d START_POSE = new Pose2d(-63,-7.5, 0);
 
@@ -45,10 +45,12 @@ public class SplineyAutoFour extends LinearOpMode {
     }
     public static Action grabPos(){
         return new SequentialAction(
-            armBase.armToRaisedAction(),
+            wrist.clawToAction(WristSubsystem28147.ClawState.OPEN),
+        new SleepAction(0.25),
+
+                armBase.armToRaisedAction(),
             armWrist.armToRaisedAction(),
-            wrist.wrist(-1),
-            wrist.clawToAction(WristSubsystem28147.ClawState.OPEN));
+            wrist.wrist(-1));
     }
 
     public static Action clip(){

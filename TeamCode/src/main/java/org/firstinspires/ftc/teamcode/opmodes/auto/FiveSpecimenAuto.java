@@ -81,9 +81,9 @@ public class FiveSpecimenAuto extends LinearOpMode {
         armBase = new ServoPivotSubsystemRR(hardwareMap, "rarmbase","larmbase",ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_BASE);
         armWrist = new ServoPivotSubsystemRR(hardwareMap, "laservo", "raservo", ServoPivotSubsystem.PartType.VERTICAL_EXTENSION_ARM);
 
-        MecanumDrive.PARAMS.maxWheelVel = 60;
-        MecanumDrive.PARAMS.maxProfileAccel = 45;
-        MecanumDrive.PARAMS.minProfileAccel = -45;
+        MecanumDrive.PARAMS.maxWheelVel = 30;
+        MecanumDrive.PARAMS.maxProfileAccel = 30;
+        MecanumDrive.PARAMS.minProfileAccel = 30;
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, START_POSE);
 
